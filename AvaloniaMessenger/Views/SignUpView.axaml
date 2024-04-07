@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaMessenger.Views.SignUpView"
+             xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
+             x:DataType="vm:SignUpViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="MaxWidth" Value="30" />
+      <Setter Property="Margin" Value="4"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+  </UserControl.Styles>
+  <DockPanel
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center">
+    <StackPanel>
+
+      <Label
+        HorizontalAlignment="Center"
+        FontSize="24">Registration</Label>
+
+      <Label
+        HorizontalAlignment="Left"
+        FontSize="16">Username:</Label>
+      <TextBox
+        HorizontalAlignment="Left"
+        Watermark="Username here..."
+        MinWidth="150"
+        Text="{Binding Username}"></TextBox>
+      <Label
+        HorizontalAlignment="Left"
+        FontSize="16">Login:</Label>
+      <TextBox
+        Watermark="Login here..."
+        MinWidth="150"
+        Text="{Binding Login}"></TextBox>
+
+      <ListBox ItemsSource="{Binding LoginErrors}"
+               Background="Transparent"
+               IsEnabled="False">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <Label
+                Margin="0"
+                HorizontalAlignment="Center"
+                FontSize="12"
+                FontStyle="Italic"
+                Content="{Binding}"
+                Foreground="Red"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <Label
+        HorizontalAlignment="Left"
+        FontSize="16">Password:</Label>
+      
+      <WrapPanel HorizontalAlignment="Center">
+        <TextBox 
+          PasswordChar="{Binding PasswordChar}"
+          Watermark="Password here..."
+          MinWidth="150"
+          Text="{Binding Password}"></TextBox>
+        <Button
+          Command="{Binding TogglePasswordChar}"
+          Background="Transparent">
+          <Image Source="{Binding EyeIcon}"
+                 Width="20"
+                 Height="20"/>
+        </Button>
+      </WrapPanel>
+
+
+      <ListBox ItemsSource="{Binding PasswordErrors}"
+               Background="Transparent"
+               IsEnabled="False">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <Label
+                Margin="0"
+                HorizontalAlignment="Center"
+                FontSize="12"
+                FontStyle="Italic"
+                Content="{Binding}"
+                Foreground="Red"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <Label
+        HorizontalAlignment="Left"
+        FontSize="16">Repeat password:</Label>
+      <TextBox
+          PasswordChar="{Binding PasswordChar}"
+          Watermark="Password here..."
+          MinWidth="150"
+          Text="{Binding RepeatPassword}"></TextBox>
+
+      <ListBox ItemsSource="{Binding RepeatPasswordErrors}"
+               Background="Transparent"
+               IsEnabled="False">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <Label
+                Margin="0"
+                HorizontalAlignment="Center"
+                FontSize="12"
+                FontStyle="Italic"
+                Content="{Binding}"
+                Foreground="Red"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <Button
+        Command="{Binding SignUpCommand}">Sign up</Button>
+
+      <Button
+        Command="{Binding ReturnCommand}">Return</Button>
+
+    </StackPanel>
+  </DockPanel>
+</UserControl>

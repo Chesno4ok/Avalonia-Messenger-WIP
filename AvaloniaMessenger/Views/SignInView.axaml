@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaMessenger.Views.SignInView"
+             xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
+             x:DataType="vm:SignInViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="MaxWidth" Value="30" />
+      <Setter Property="Margin" Value="4"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+  </UserControl.Styles>
+  <DockPanel
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center">
+    <StackPanel>
+      
+      <Label 
+        HorizontalAlignment="Center" 
+        FontSize="24">Garlic Messenger</Label>
+      
+      <TextBox 
+        Watermark="Login" 
+        MinWidth="150"
+        Text="{Binding Login}"></TextBox>
+
+      <DockPanel Margin="40,0,0,0">
+        <TextBox
+          PasswordChar="{Binding PasswordChar}"
+          Watermark="Password"
+          MinWidth="150"
+          Text="{Binding Password}"></TextBox>
+        <Button
+          Command="{Binding TogglePasswordChar}"
+          Background="Transparent">
+          <Image Source="{Binding EyeIcon}"
+                 Width="20"
+                 Height="20"/>
+        </Button>
+      </DockPanel>
+      
+      <Button 
+        Command="{Binding SignInCommand}">Sign In</Button>
+      
+      <Button
+        Command="{Binding SignUpCommand}">Sign Up</Button>
+      
+    </StackPanel>
+  </DockPanel>
+</UserControl>
