@@ -9,6 +9,8 @@ using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Collections;
+using Avalonia.Platform;
+using AvaloniaMessenger.Assets;
 
 namespace AvaloniaMessenger.ViewModels
 {
@@ -80,7 +82,7 @@ namespace AvaloniaMessenger.ViewModels
             }
         }
 
-        private char? _passwordChar = '•';
+          private char? _passwordChar = '•';
         public char? PasswordChar
         {
             get
@@ -115,29 +117,28 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
         public SignUpViewModel()
         {
-            _eyeIcon = new Bitmap($"{AssetManager.GetEyeIconPath(IsPasswordHidden)}");
-            
+            _eyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
+
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
             this.WhenAnyValue(x => x.Login).Subscribe(x => { CheckLogin(Login); });
             this.WhenAnyValue(x => x.Password).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
-            this.WhenAnyValue(x => x.RepeatPassword).Subscribe(x => { CheckRepeatPassword(Password, RepeatPassword); });
 
             var isValidObservable = this.WhenAnyValue(
                 l => l.Login, p => p.Password, rp => rp.RepeatPassword, u => u.Username,
                 (l, p, rp, u) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p) && !String.IsNullOrEmpty(rp) && !String.IsNullOrEmpty(u));
-           
+            
 
             SignUpCommand = ReactiveCommand.Create(() => new UserInfo() { 
                 Login = this.Login, 
                 Password = this.Password, 
                 Username = this.Username }, isValidObservable);
-
+            
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
         }
         public void ToggleEye()
         {
             PasswordChar = IsPasswordHidden ? '•' : null;
-            EyeIcon = new Bitmap($"{AssetManager.GetEyeIconPath(IsPasswordHidden)}");
+            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
         }
 
         public void CheckLogin(string login)
@@ -147,27 +148,21 @@ namespace AvaloniaMessenger.ViewModels
         public void CheckPassword(string password, string repeatPassword)
         {
             PasswordErrors.Clear();
+            RepeatPasswordErrors.Clear();
 
             if (String.IsNullOrEmpty(password))
                 return;
 
             if (password.Length < 8)
-                PasswordErrors.Add("Password must have at least 8 symbols");
+                PasswordErrors.Add("At least 8 symbols");
             if (!password.Any(i => Char.IsUpper(i)))
-                PasswordErrors.Add("Password must have at least 1 uppercase letter");
+                PasswordErrors.Add("At least 1 uppercase letter");
             if (!password.Any(i => Char.IsNumber(i)))
-                PasswordErrors.Add("Password must have at least 1 number");
+                PasswordErrors.Add("At least 1 number");
             if (!password.Any(i => !Char.IsLetterOrDigit(i)))
-                PasswordErrors.Add("Password must have at least 1 special symbol");
-        }
-        public void CheckRepeatPassword(string password, string repeatPassword)
-        {
-            RepeatPasswordErrors.Clear();
-
+                PasswordErrors.Add("At least 1 special symbol");
             if (password != repeatPassword)
                 RepeatPasswordErrors.Add("Passwords must be the same");
         }
-
-
     }
 }

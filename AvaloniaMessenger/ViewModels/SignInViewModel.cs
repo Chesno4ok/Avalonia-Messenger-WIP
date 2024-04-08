@@ -1,4 +1,5 @@
 ﻿using AvaloniaMessenger.Models;
+using Avalonia.Platform;
 using Avalonia.Media;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -13,6 +14,7 @@ using Avalonia;
 using Avalonia.Media.Imaging;
 using System.IO;
 using Microsoft.Win32;
+using AvaloniaMessenger.Assets;
 
 namespace AvaloniaMessenger.ViewModels
 {
@@ -92,10 +94,9 @@ namespace AvaloniaMessenger.ViewModels
         {
             var isValidObservable = this.WhenAnyValue(
                 x => x.Login, x => x.Password, (l,p) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p));
-           
-            _eyeIcon = new Bitmap($"{AssetManager.GetEyeIconPath(IsPasswordHidden)}");
-            this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
+            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
 
+            this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
 
             SignInCommand = ReactiveCommand.Create(() => new UserInfo() { Login = this.Login, Password = this.Password }, isValidObservable);
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
@@ -103,7 +104,7 @@ namespace AvaloniaMessenger.ViewModels
         public void ToggleEye()
         {
             PasswordChar = IsPasswordHidden ? '•' : null;
-            EyeIcon = new Bitmap($"{AssetManager.GetEyeIconPath(IsPasswordHidden)}");
+            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
         }
     }
 }
