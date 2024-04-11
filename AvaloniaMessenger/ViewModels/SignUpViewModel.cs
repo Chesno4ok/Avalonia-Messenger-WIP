@@ -112,7 +112,7 @@ namespace AvaloniaMessenger.ViewModels
         public AvaloniaList<string> PasswordErrors { get; private set; } = new AvaloniaList<string>();
         public AvaloniaList<string> RepeatPasswordErrors { get; private set; } = new AvaloniaList<string>();
 
-        public ReactiveCommand<Unit, UserInfo> SignUpCommand { get; private set; }
+        public ReactiveCommand<Unit, User> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
         public SignUpViewModel()
@@ -128,10 +128,10 @@ namespace AvaloniaMessenger.ViewModels
                 (l, p, rp, u) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p) && !String.IsNullOrEmpty(rp) && !String.IsNullOrEmpty(u));
             
 
-            SignUpCommand = ReactiveCommand.Create(() => new UserInfo() { 
+            SignUpCommand = ReactiveCommand.Create(() => new User() { 
                 Login = this.Login, 
                 Password = this.Password, 
-                Username = this.Username }, isValidObservable);
+                Name = this.Username }, isValidObservable);
             
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
         }

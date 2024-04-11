@@ -42,6 +42,14 @@ namespace AvaloniaMessenger.Controllers
 
             return user;
         }
+        public static User[]? SearchUser(string username)
+        {
+            var query = GetDictionary(username);
+
+            User[]? users = GetRequest<User[]>("/User/search_user", query, null);
+
+            return users;
+        }
         private static T? GetRequest<T>(string method, Dictionary<string, string> query, HttpContent? body)
         {
             var client = new HttpClient();
