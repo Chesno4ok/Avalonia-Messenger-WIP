@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ChesnokMessengerAPI;
+namespace AvaloniaMessenger.Models;
 
 public partial class ChatUser
 {
@@ -12,8 +12,4 @@ public partial class ChatUser
     public int ChatId { get; set; }
 
     public bool HasUpdates { get; set; }
-
-    public virtual Chat Chat { get; set; } = null!;
-
-    public virtual User User { get; set; } = null!;
 }

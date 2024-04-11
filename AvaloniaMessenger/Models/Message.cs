@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ChesnokMessengerAPI;
+namespace AvaloniaMessenger.Models;
 
 public partial class Message
 {
@@ -18,6 +18,4 @@ public partial class Message
     public string Type { get; set; } = null!;
 
     public bool IsRead { get; set; }
-
-    public virtual User UserNavigation { get; set; } = null!;
 }

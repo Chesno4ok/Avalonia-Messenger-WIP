@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ChesnokMessengerAPI;
+namespace AvaloniaMessenger.Models;
 
 public partial class User
 {
@@ -14,8 +14,4 @@ public partial class User
     public string Password { get; set; } = null!;
 
     public string Token { get; set; } = null!;
-
-    public virtual ICollection<ChatUser> ChatUsers { get; set; } = new List<ChatUser>();
-
-    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 }

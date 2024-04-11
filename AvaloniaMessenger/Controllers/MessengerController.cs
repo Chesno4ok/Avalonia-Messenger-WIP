@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using AvaloniaMessenger.Models;
 using Newtonsoft.Json;
 
@@ -15,15 +16,33 @@ namespace AvaloniaMessenger.Controllers
         private static string _serverUrl { get; set; } = "https://localhost:7284";
 
 
-        public static void SignIn(string login, string password)
+        public static User? SignIn(string login, string password)
         {
-            
+            var query = GetDictionary( login, password);
+
+            User? user = new User();
+
+            user = GetRequest<User>("/User/get_token", query, null);
+
+            return user;
         }
-        public static void SignUp(string login, string password, string username)
+        public static User SignUp(string login, string password, string name)
         {
-            
+            var query = GetDictionary(name, login, password);
+
+            User? user = new User();
+            try
+            {
+                user = GetRequest<User>("/User/register_user", query, new StringContent(""));
+            }
+            catch
+            {
+
+            }
+
+            return user;
         }
-        private static T? MakeRequset<T>(string method, Dictionary<string, string> query)
+        private static T? GetRequest<T>(string method, Dictionary<string, string> query, HttpContent? body)
         {
             var client = new HttpClient();
             string requestUri = _serverUrl + method;
@@ -36,7 +55,9 @@ namespace AvaloniaMessenger.Controllers
             HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                response = client.GetAsync(requestUri).Result;
+                response = body == null ?
+                client.GetAsync(requestUri).Result :
+                client.PostAsync(requestUri, body).Result;
             }
             catch
             {
@@ -45,7 +66,7 @@ namespace AvaloniaMessenger.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException(response.StatusCode.ToString());
+                throw new HttpRequestException("Couldn't make a request", null, response.StatusCode);
             }
             if(response.Content.ToString() == null)
             {
@@ -55,6 +76,18 @@ namespace AvaloniaMessenger.Controllers
             var obj = JsonConvert.DeserializeObject<T>(response.Content.ToString());
 
             return obj;
+        }
+
+        private static Dictionary<string, string> GetDictionary(params string[] query)
+        {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+
+            foreach(var i in query)
+            {
+                res.Add(nameof(i), i);
+            }
+
+            return res;
         }
     }
 }
