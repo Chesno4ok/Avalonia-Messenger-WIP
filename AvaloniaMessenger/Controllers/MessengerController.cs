@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AvaloniaMessenger.Models;
@@ -18,84 +21,50 @@ namespace AvaloniaMessenger.Controllers
 
         public static User? SignIn(string login, string password)
         {
-            var query = GetDictionary( login, password);
+            User user = new User() { Login = login, Password = password};
 
-            User? user = new User();
+            User? resUser = new User();
 
-            user = GetRequest<User>("/User/get_token", query, null);
+           // user = GetRequest<User>("/User/get_token", query, null);
 
             return user;
         }
         public static User SignUp(string login, string password, string name)
         {
-            var query = GetDictionary(name, login, password);
+            User user = new User() { Login = login, Password = password, Name = name };
 
-            User? user = new User();
-            try
-            {
-                user = GetRequest<User>("/User/register_user", query, new StringContent(""));
-            }
-            catch
-            {
+            User? resUser = new User();
 
-            }
+           // resUser = GetRequest<User>("/User/register_user?", query, new StringContent(""));
 
             return user;
         }
-        public static User[]? SearchUser(string username)
+        //public static User[]? SearchUser(string username)
+        //{
+
+        //    User[]? users = GetRequest<User[]>("/User/search_user?", query, null);
+
+        //    return users;
+        //}
+        [QueryInfo("login")]
+        public static bool CheckLogin(string login)
         {
-            var query = GetDictionary(username);
+            User user = new User() { Login = login };
+            var query = GetQueryDictionary(login);
 
-            User[]? users = GetRequest<User[]>("/User/search_user", query, null);
-
-            return users;
-        }
-        private static T? GetRequest<T>(string method, Dictionary<string, string> query, HttpContent? body)
-        {
-            var client = new HttpClient();
-            string requestUri = _serverUrl + method;
-
-            foreach(var p in query)
-            {
-                requestUri += $"{p.Key}={p.Value}&";
-            }
-
-            HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                response = body == null ?
-                client.GetAsync(requestUri).Result :
-                client.PostAsync(requestUri, body).Result;
+                GetRequest<User[]>("/User/check_login?", query);
+                return true;
             }
-            catch
+            catch(HttpRequestException e)
             {
-                throw new HttpRequestException("Couldn't reach server");
+                return false;
             }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new HttpRequestException("Couldn't make a request", null, response.StatusCode);
-            }
-            if(response.Content.ToString() == null)
-            {
-                throw new Exception("Got null response");
-            }
-
-            var obj = JsonConvert.DeserializeObject<T>(response.Content.ToString());
-
-            return obj;
+            
         }
-
-        private static Dictionary<string, string> GetDictionary(params string[] query)
-        {
-            Dictionary<string, string> res = new Dictionary<string, string>();
-
-            foreach(var i in query)
-            {
-                res.Add(nameof(i), i);
-            }
-
-            return res;
-        }
+        
     }
+    
+
 }

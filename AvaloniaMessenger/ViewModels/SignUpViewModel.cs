@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using Avalonia.Platform;
+using AvaloniaMessenger.Controllers;
 using AvaloniaMessenger.Assets;
 
 namespace AvaloniaMessenger.ViewModels
@@ -143,7 +144,10 @@ namespace AvaloniaMessenger.ViewModels
 
         public void CheckLogin(string login)
         {
+            LoginErrors.Clear();
 
+            if (!MessengerController.CheckLogin(login))
+                LoginErrors.Add("Login already exists!");
         }
         public void CheckPassword(string password, string repeatPassword)
         {

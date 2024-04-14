@@ -87,7 +87,7 @@ namespace AvaloniaMessenger.ViewModels
 
         
 
-        public ReactiveCommand<Unit, UserInfo> SignInCommand { get; private set; }
+        public ReactiveCommand<Unit, User> SignInCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
         public SignInViewModel()
@@ -98,7 +98,7 @@ namespace AvaloniaMessenger.ViewModels
 
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
 
-            SignInCommand = ReactiveCommand.Create(() => new UserInfo() { Login = this.Login, Password = this.Password }, isValidObservable);
+            SignInCommand = ReactiveCommand.Create(() => new User() { Login = this.Login, Password = this.Password }, isValidObservable);
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
         }
         public void ToggleEye()
