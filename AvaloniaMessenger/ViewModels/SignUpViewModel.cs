@@ -15,8 +15,14 @@ using AvaloniaMessenger.Assets;
 
 namespace AvaloniaMessenger.ViewModels
 {
+    
     public class SignUpViewModel : ViewModelBase
     {
+        public enum Problems
+        {
+            TooLong,
+            AlreadyExists
+        };
 
         private string _username = String.Empty;
         public string Username
@@ -110,18 +116,21 @@ namespace AvaloniaMessenger.ViewModels
         }
 
         public AvaloniaList<string> LoginErrors { get; private set; } = new AvaloniaList<string>();
+        public AvaloniaList<Problems> LoginTroubles { get; private set; } = new AvaloniaList<Problems>();
         public AvaloniaList<string> PasswordErrors { get; private set; } = new AvaloniaList<string>();
         public AvaloniaList<string> RepeatPasswordErrors { get; private set; } = new AvaloniaList<string>();
 
         public ReactiveCommand<Unit, User> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
+
+        MessengerController messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
         public SignUpViewModel()
         {
             _eyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
 
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
-            this.WhenAnyValue(x => x.Login).Subscribe(x => { CheckLogin(Login); });
+            this.WhenAnyValue(x => x.Login).Subscribe( x => { Task.Run(() => CheckLogin(Login)); });
             this.WhenAnyValue(x => x.Password).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
 
             var isValidObservable = this.WhenAnyValue(
@@ -135,6 +144,8 @@ namespace AvaloniaMessenger.ViewModels
                 Name = this.Username }, isValidObservable);
             
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
+
+            
         }
         public void ToggleEye()
         {
@@ -142,12 +153,21 @@ namespace AvaloniaMessenger.ViewModels
             EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
         }
 
-        public void CheckLogin(string login)
+        public async Task CheckLogin(string login)
         {
-            LoginErrors.Clear();
+            if (login == "")
+                return;
 
-            if (!MessengerController.CheckLogin(login))
-                LoginErrors.Add("Login already exists!");
+            if (messengerController.CheckLogin(login) && !LoginErrors.Any(i => i == "Login already exists"))
+                LoginErrors.Add("Login already exists");
+            else
+                LoginErrors.Remove("Login already exists");    
+
+            if (Login.Length < 4 && !LoginErrors.Any(i => i == "Login is too short"))
+                LoginErrors.Add("Login is too short");
+            else if(Login.Length > 3 && LoginErrors.Any(i => i == "Login is too short"))
+                LoginErrors.Remove("Login is too short");
+
         }
         public void CheckPassword(string password, string repeatPassword)
         {
@@ -169,4 +189,6 @@ namespace AvaloniaMessenger.ViewModels
                 RepeatPasswordErrors.Add("Passwords must be the same");
         }
     }
+
+    
 }

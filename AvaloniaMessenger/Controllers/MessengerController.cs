@@ -14,12 +14,20 @@ using Newtonsoft.Json;
 
 namespace AvaloniaMessenger.Controllers
 {
-    static class MessengerController
+    class MessengerController
     {
-        private static string _serverUrl { get; set; } = "https://localhost:7284";
 
+        private ApiCaller apiCaller { get; set; }
+        private QueryStringBuilder queryBuilder { get; set; }
 
-        public static User? SignIn(string login, string password)
+        public MessengerController(Uri serverInfo)
+        {
+            apiCaller = new ApiCaller(serverInfo);
+
+            queryBuilder = new QueryStringBuilder();
+        }
+
+        public User? SignIn(string login, string password)
         {
             User user = new User() { Login = login, Password = password};
 
@@ -29,7 +37,7 @@ namespace AvaloniaMessenger.Controllers
 
             return user;
         }
-        public static User SignUp(string login, string password, string name)
+        public User SignUp(string login, string password, string name)
         {
             User user = new User() { Login = login, Password = password, Name = name };
 
@@ -39,27 +47,20 @@ namespace AvaloniaMessenger.Controllers
 
             return user;
         }
-        //public static User[]? SearchUser(string username)
-        //{
-
-        //    User[]? users = GetRequest<User[]>("/User/search_user?", query, null);
-
-        //    return users;
-        //}
         [QueryInfo("login")]
-        public static bool CheckLogin(string login)
+        public bool CheckLogin(string login)
         {
             User user = new User() { Login = login };
-            var query = GetQueryDictionary(login);
+            var query = queryBuilder.GetQueryString(login);
 
             try
             {
-                GetRequest<User[]>("/User/check_login?", query);
-                return true;
+                apiCaller.GetRequest("User/check_login?", query);
+                return false;
             }
             catch(HttpRequestException e)
             {
-                return false;
+                return true;
             }
             
         }

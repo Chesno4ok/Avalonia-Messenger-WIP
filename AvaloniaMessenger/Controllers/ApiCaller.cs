@@ -21,7 +21,7 @@ namespace AvaloniaMessenger.Controllers
         public T? GetRequest<T>(string method, string query)
         {
             var client = new HttpClient();
-            string requestUri = ServerUrl.ToString() + query;
+            string requestUri = ServerUrl.ToString() + method + query;
 
             HttpResponseMessage response = new HttpResponseMessage();
             try
@@ -46,5 +46,33 @@ namespace AvaloniaMessenger.Controllers
 
             return obj;
         }
+
+        public HttpResponseMessage GetRequest(string method, string query)
+        {
+            var client = new HttpClient();
+            string requestUri = ServerUrl.ToString() + method + query;
+
+            HttpResponseMessage response = new HttpResponseMessage();
+            try
+            {
+                response = client.GetAsync(requestUri).Result;
+            }
+            catch
+            {
+                throw new HttpRequestException("Couldn't reach server");
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException("Bad Request", null, response.StatusCode);
+            }
+            if (response.Content.ToString() == null)
+            {
+                throw new Exception("Got null response");
+            }
+
+            return response;
+        }
+
     }   
 }
