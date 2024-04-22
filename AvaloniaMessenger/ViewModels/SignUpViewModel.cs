@@ -116,9 +116,9 @@ namespace AvaloniaMessenger.ViewModels
         }
 
         public AvaloniaList<string> LoginErrors { get; private set; } = new AvaloniaList<string>();
-        public AvaloniaList<Problems> LoginTroubles { get; private set; } = new AvaloniaList<Problems>();
         public AvaloniaList<string> PasswordErrors { get; private set; } = new AvaloniaList<string>();
         public AvaloniaList<string> RepeatPasswordErrors { get; private set; } = new AvaloniaList<string>();
+        public AvaloniaList<string> SignInErrors { get; private set; } = new AvaloniaList<string>();
 
         public ReactiveCommand<Unit, User> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
@@ -132,10 +132,17 @@ namespace AvaloniaMessenger.ViewModels
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
             this.WhenAnyValue(x => x.Login).Subscribe( x => { Task.Run(() => CheckLogin(Login)); });
             this.WhenAnyValue(x => x.Password).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
+            this.WhenAnyValue(x => x.RepeatPassword).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
 
             var isValidObservable = this.WhenAnyValue(
                 l => l.Login, p => p.Password, rp => rp.RepeatPassword, u => u.Username,
-                (l, p, rp, u) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p) && !String.IsNullOrEmpty(rp) && !String.IsNullOrEmpty(u));
+                (l, p, rp, u) => !String.IsNullOrEmpty(l) 
+                && !String.IsNullOrEmpty(p) 
+                && !String.IsNullOrEmpty(rp) 
+                && !String.IsNullOrEmpty(u) 
+                && PasswordErrors.Count != 0
+                && LoginErrors.Count != 0
+                && RepeatPasswordErrors.Count != 0);
             
 
             SignUpCommand = ReactiveCommand.Create(() => new User() { 
@@ -151,6 +158,23 @@ namespace AvaloniaMessenger.ViewModels
         {
             PasswordChar = IsPasswordHidden ? '•' : null;
             EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
+        }
+        public void SignUp()
+        {
+            var user = new User()
+            {
+                Login = this.Login,
+                Password = this.Password,
+                Name = this.Username
+            };
+
+            var res = messengerController.SignUp(user.Name, user.Login, user.Password);
+
+            if (res == null)
+                SignInErrors.Add("Failed to sign up");
+            else
+                ReturnCommand.Execute();
+
         }
 
         public async Task CheckLogin(string login)

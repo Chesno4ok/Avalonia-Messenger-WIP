@@ -134,13 +134,31 @@
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
-
+    
       <Button
         Command="{Binding SignUpCommand}">Sign up</Button>
 
+      <ListBox ItemsSource="{Binding SignUpErrors}"
+               Background="Transparent"
+               IsEnabled="False">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <Label
+                Margin="0"
+                HorizontalAlignment="Center"
+                FontSize="12"
+                FontStyle="Italic"
+                Content="{Binding}"
+                Foreground="Red"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      
       <Button
         Command="{Binding ReturnCommand}">Return</Button>
-
     </StackPanel>
   </DockPanel>
+  
 </UserControl>
