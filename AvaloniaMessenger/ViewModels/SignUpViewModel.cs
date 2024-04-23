@@ -120,7 +120,7 @@ namespace AvaloniaMessenger.ViewModels
         public AvaloniaList<string> RepeatPasswordErrors { get; private set; } = new AvaloniaList<string>();
         public AvaloniaList<string> SignInErrors { get; private set; } = new AvaloniaList<string>();
 
-        public ReactiveCommand<Unit, User> SignUpCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
 
@@ -140,15 +140,12 @@ namespace AvaloniaMessenger.ViewModels
                 && !String.IsNullOrEmpty(p) 
                 && !String.IsNullOrEmpty(rp) 
                 && !String.IsNullOrEmpty(u) 
-                && PasswordErrors.Count != 0
-                && LoginErrors.Count != 0
-                && RepeatPasswordErrors.Count != 0);
+                && PasswordErrors.Count == 0
+                && LoginErrors.Count == 0
+                && RepeatPasswordErrors.Count == 0);
             
 
-            SignUpCommand = ReactiveCommand.Create(() => new User() { 
-                Login = this.Login, 
-                Password = this.Password, 
-                Name = this.Username }, isValidObservable);
+            SignUpCommand = ReactiveCommand.Create(() => SignUp(), isValidObservable);
             
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
 
@@ -161,6 +158,8 @@ namespace AvaloniaMessenger.ViewModels
         }
         public void SignUp()
         {
+            SignInErrors.Clear();
+
             var user = new User()
             {
                 Login = this.Login,
@@ -168,13 +167,16 @@ namespace AvaloniaMessenger.ViewModels
                 Name = this.Username
             };
 
-            var res = messengerController.SignUp(user.Name, user.Login, user.Password);
+            try
+            {
+                messengerController.SignUp(user.Name, user.Login, user.Password);
 
-            if (res == null)
+                ReturnCommand.Execute().Subscribe();
+            }
+            catch
+            {
                 SignInErrors.Add("Failed to sign up");
-            else
-                ReturnCommand.Execute();
-
+            }
         }
 
         public async Task CheckLogin(string login)

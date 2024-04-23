@@ -16,6 +16,11 @@ namespace AvaloniaMessenger.Controllers
         [QueryTypeInfo(typeof(string))]
         public string GetString(object value)
         {
+            return '"' + $"{value}" + '"';
+        }
+        [QueryTypeInfo(typeof(int))]
+        public string GetInteger(object value)
+        {
             return $"{value}";
         }
 
@@ -44,7 +49,7 @@ namespace AvaloniaMessenger.Controllers
                 if (m == null)
                     queryString += $"{p.Key}={p.Value}&";
                 else
-                    queryString += $"{p.Key}={m.Invoke(this, new object[] { p.Value })}";
+                    queryString += $"{p.Key}={m.Invoke(this, new object[] { p.Value })}&";
             }
 
             return queryString;
