@@ -124,7 +124,7 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
 
-        MessengerController messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
+        MessengerController _messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
         public SignUpViewModel()
         {
             _eyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
@@ -169,7 +169,7 @@ namespace AvaloniaMessenger.ViewModels
 
             try
             {
-                messengerController.SignUp(user.Name, user.Login, user.Password);
+                _messengerController.SignUp(user.Name, user.Login, user.Password);
 
                 ReturnCommand.Execute().Subscribe();
             }
@@ -184,7 +184,7 @@ namespace AvaloniaMessenger.ViewModels
             if (login == "")
                 return;
 
-            if (messengerController.CheckLogin(login) && !LoginErrors.Any(i => i == "Login already exists"))
+            if (_messengerController.CheckLogin(login) && !LoginErrors.Any(i => i == "Login already exists"))
                 LoginErrors.Add("Login already exists");
             else
                 LoginErrors.Remove("Login already exists");    

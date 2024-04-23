@@ -15,6 +15,7 @@ using Avalonia.Media.Imaging;
 using System.IO;
 using Microsoft.Win32;
 using AvaloniaMessenger.Assets;
+using AvaloniaMessenger.Controllers;
 
 namespace AvaloniaMessenger.ViewModels
 {
@@ -85,11 +86,10 @@ namespace AvaloniaMessenger.ViewModels
             }
         }
 
-        
-
         public ReactiveCommand<Unit, User> SignInCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
+        MessengerController _messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
         public SignInViewModel()
         {
             var isValidObservable = this.WhenAnyValue(
@@ -98,7 +98,7 @@ namespace AvaloniaMessenger.ViewModels
 
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
 
-            SignInCommand = ReactiveCommand.Create(() => new User() { Login = this.Login, Password = this.Password }, isValidObservable);
+            SignInCommand = ReactiveCommand.Create<User>(() => new User() { Login = Login, Password = this.Password }, isValidObservable);
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
         }
         public void ToggleEye()

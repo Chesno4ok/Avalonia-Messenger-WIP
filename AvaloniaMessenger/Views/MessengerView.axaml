@@ -7,5 +7,20 @@
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
              x:DataType="vm:MessengerViewModel">
-             
+  <Grid ColumnDefinitions="*,1.5*" RowDefinitions="*,10*">
+    <StackPanel Name="ChatPanel" Grid.Row="1" Background="AntiqueWhite">
+      
+    </StackPanel>
+    
+    <StackPanel Name="MessagePanel" Grid.Row="1" Grid.Column="1" Background="AliceBlue">
+
+    </StackPanel>
+
+    <DockPanel Name="ToolPanel" Background="PowderBlue">
+      
+    </DockPanel>
+    <DockPanel Name="ChatHeaderPanel" Grid.Column="1" Background="PaleGoldenrod">
+    
+    </DockPanel>
+  </Grid>
 </UserControl>

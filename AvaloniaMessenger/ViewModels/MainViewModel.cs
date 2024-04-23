@@ -1,6 +1,10 @@
 ﻿using Avalonia.Controls;
 using AvaloniaMessenger.Views;
 using ReactiveUI;
+using AvaloniaMessenger.Models;
+using System.Reactive.Linq;
+using System.Diagnostics;
+using System;
 
 namespace AvaloniaMessenger.ViewModels;
 
@@ -22,10 +26,15 @@ public class MainViewModel : ViewModelBase
     {   
         SetSignIn();
     }   
+    public void SetMessenger(User user)
+    {
+        Debug.Print(user.Name);
+    }
     public void SetSignIn()
     {   
         var viewModel = new SignInViewModel();
 
+        viewModel.SignInCommand.Subscribe(user => SetMessenger(user));
         viewModel.SignUpCommand = ReactiveCommand.Create(() => { SetSignUp(); });
 
         MainView = new SignInView { DataContext = viewModel };
