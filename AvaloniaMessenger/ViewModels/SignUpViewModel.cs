@@ -16,7 +16,7 @@ using AvaloniaMessenger.Assets;
 namespace AvaloniaMessenger.ViewModels
 {
     
-    public class SignUpViewModel : ViewModelBase
+    class SignUpViewModel : ViewModelBase
     {
         public enum Problems
         {
@@ -124,9 +124,10 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
 
-        MessengerController _messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
-        public SignUpViewModel()
+        private MessengerController _messengerController { get; set; }
+        public SignUpViewModel(MessengerController messengerController)
         {
+            _messengerController = messengerController;
             _eyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
 
             this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
@@ -148,8 +149,6 @@ namespace AvaloniaMessenger.ViewModels
             SignUpCommand = ReactiveCommand.Create(() => SignUp(), isValidObservable);
             
             TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
-
-            
         }
         public void ToggleEye()
         {

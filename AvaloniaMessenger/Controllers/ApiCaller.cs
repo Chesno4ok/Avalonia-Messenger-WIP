@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AvaloniaMessenger.Exceptions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -60,7 +61,7 @@ namespace AvaloniaMessenger.Controllers
             }
             catch
             {
-                throw new HttpRequestException("Couldn't reach server");
+                throw new NoConnectionException("Couldn't reach server");
             }
 
             if (!response.IsSuccessStatusCode)

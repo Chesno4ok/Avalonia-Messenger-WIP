@@ -27,13 +27,12 @@ namespace AvaloniaMessenger.Controllers
             queryBuilder = new QueryStringBuilder();
         }
 
+        [QueryInfo("login", "password")]
         public User? SignIn(string login, string password)
         {
-            User user = new User() { Login = login, Password = password};
+            var query = queryBuilder.GetQueryString(login, password);
 
-            User? resUser = new User();
-
-           // user = GetRequest<User>("/User/get_token", query, null);
+            User? user = apiCaller.GetRequest<User>("/User/get_token", query);
 
             return user;
         }
@@ -56,7 +55,7 @@ namespace AvaloniaMessenger.Controllers
                 apiCaller.GetRequest("User/check_login?", query);
                 return false;
             }
-            catch(HttpRequestException e)
+            catch(HttpRequestException)
             {
                 return true;
             }

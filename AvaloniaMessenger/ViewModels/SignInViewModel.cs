@@ -89,7 +89,6 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, User> SignInCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
-        MessengerController _messengerController { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
         public SignInViewModel()
         {
             var isValidObservable = this.WhenAnyValue(
