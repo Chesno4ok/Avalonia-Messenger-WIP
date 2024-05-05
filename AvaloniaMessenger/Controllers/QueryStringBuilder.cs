@@ -16,7 +16,7 @@ namespace AvaloniaMessenger.Controllers
         [QueryTypeInfo(typeof(string))]
         public string GetString(object value)
         {
-            return '"' + $"{value}" + '"';
+            return $"{value}";
         }
         [QueryTypeInfo(typeof(int))]
         public string GetInteger(object value)

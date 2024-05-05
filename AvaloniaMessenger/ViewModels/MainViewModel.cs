@@ -1,16 +1,18 @@
 ﻿using Avalonia.Controls;
+using AvaloniaMessenger.Controllers;
+using AvaloniaMessenger.Models;
 using AvaloniaMessenger.Views;
 using ReactiveUI;
-using AvaloniaMessenger.Models;
-using System.Reactive.Linq;
-using System.Diagnostics;
 using System;
+using System.Diagnostics;
+using System.Reactive.Linq;
 
 namespace AvaloniaMessenger.ViewModels;
 
-public class MainViewModel : ViewModelBase
+class MainViewModel : ViewModelBase
 {       
     private UserControl _mainView;
+    public MessengerController Messenger { get; set; } = new MessengerController(new Uri("https://localhost:7284"));
     public UserControl MainView 
     {   
         get 
@@ -28,7 +30,18 @@ public class MainViewModel : ViewModelBase
     }   
     public void SetMessenger(User user)
     {
-        Debug.Print(user.Name);
+        User? userToken = null;
+        try
+        {
+            userToken = Messenger.SignIn(user.Login, user.Password);
+        }
+        catch
+        {
+
+        }
+        
+        if(userToken != null)
+            MainView = new MessengerView();
     }
     public void SetSignIn()
     {   

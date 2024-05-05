@@ -26,14 +26,14 @@ namespace AvaloniaMessenger.Controllers
 
             queryBuilder = new QueryStringBuilder();
         }
-
+        [QueryInfo("login", "password")]
         public User? SignIn(string login, string password)
         {
-            User user = new User() { Login = login, Password = password};
+            User? user = new User() { Login = login, Password = password};
 
-            User? resUser = new User();
+            var query = queryBuilder.GetQueryString(login, password);
 
-           // user = GetRequest<User>("/User/get_token", query, null);
+            user = apiCaller.GetRequest<User>("User/get_token?", query);
 
             return user;
         }
