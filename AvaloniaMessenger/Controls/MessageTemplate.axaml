@@ -1,0 +1,27 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AvaloniaMessenger.Controls">
+  <Design.PreviewWith>
+    <controls:MessageTemplate />
+  </Design.PreviewWith>
+
+  <Style Selector="controls|MessageTemplate">
+    <!-- Set Defaults -->
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel MaxWidth="300">
+          <TextBlock
+                     Text="{TemplateBinding Sender}"
+                     TextWrapping="Wrap"
+                     FontWeight="DemiBold"
+                     Foreground="BlueViolet"/>
+          <TextBlock Text="{TemplateBinding TextMessage}"
+                     TextWrapping="Wrap"/>
+          <TextBlock Text="{TemplateBinding Time}"
+                     HorizontalAlignment="Left"
+                     Foreground="Gray"/>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

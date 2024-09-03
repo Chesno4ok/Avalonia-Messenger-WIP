@@ -16,10 +16,16 @@ using System.IO;
 using Microsoft.Win32;
 using AvaloniaMessenger.Assets;
 using AvaloniaMessenger.Controllers;
+using AvaloniaMessenger.Views;
+using DynamicData;
+using Avalonia.Threading;
+using System.Security.Authentication;
+using AvaloniaMessenger.Exceptions;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AvaloniaMessenger.ViewModels
 {
-    public class SignInViewModel : ViewModelBase
+    class SignInViewModel : ViewModelBase
     {
         private string _login = String.Empty;
         public string Login 
@@ -33,77 +39,70 @@ namespace AvaloniaMessenger.ViewModels
                 this.RaiseAndSetIfChanged(ref _login, value);
             }
         }
+        // UserControls
+        private PasswordInput _passwordInput = new PasswordInput();
+        public PasswordInput PasswordInput { get => _passwordInput; set { this.RaiseAndSetIfChanged(ref _passwordInput, value); } }
+        public PasswordInputViewModel _passwordInputViewModel = new PasswordInputViewModel();
 
-        private bool _isPasswordHidden = true;
-        public bool IsPasswordHidden 
-        {
-            get
-            {
-                return _isPasswordHidden;
-            } 
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isPasswordHidden, value);
-            } 
-        }
+        private ErrorListView _errorList = new();
+        public ErrorListView ErrorList { get => _errorList; set { this.RaiseAndSetIfChanged(ref _errorList, value); } }
+        private ErrorListViewModel _errorListViewModel = new ErrorListViewModel();
 
-        private char? _passwordChar = '•';
-        public char? PasswordChar
-        {
-            get
-            {
-                return _passwordChar;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _passwordChar, value);
-            }
-        }
-
-        public IImage _eyeIcon;
-        public IImage EyeIcon
-        {
-            get
-            {
-                return _eyeIcon;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _eyeIcon, value);
-            }
-        }
-
-        private string _password = String.Empty;
-        public string Password
-        {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _password, value);
-            }
-        }
-
-        public ReactiveCommand<Unit, User> SignInCommand { get; private set; }
+        // Commands
+        public ReactiveCommand<Unit, Unit> SignInCommand { get; set; }
+        public ReactiveCommand<User, Unit> SetMessengerCommand { get; set; }
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; set; }
-        public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
+        // Timers
+        private DispatcherTimer _loginCheckTimer = new() 
+        { 
+            IsEnabled = true, 
+            Interval = TimeSpan.FromMilliseconds(100)
+        };
+        // Others
+        public MessengerController Messenger;
         public SignInViewModel()
         {
+            // Commands
             var isValidObservable = this.WhenAnyValue(
-                x => x.Login, x => x.Password, (l,p) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p));
-            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
+                l => l.Login, p => p._passwordInputViewModel.Password, (l, p) => !String.IsNullOrEmpty(l) && !String.IsNullOrEmpty(p));
 
-            this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
+            SignInCommand = ReactiveCommand.CreateFromTask(SetMessenger, isValidObservable);
+            SignInCommand.ThrownExceptions.Subscribe(i => HandleExceptions(i));
 
-            SignInCommand = ReactiveCommand.Create<User>(() => new User() { Login = Login, Password = this.Password }, isValidObservable);
-            TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
+            // UserControls
+            ErrorList.DataContext = _errorListViewModel;
+            PasswordInput.DataContext = _passwordInputViewModel;
         }
-        public void ToggleEye()
+        public void HandleExceptions(Exception exception)
         {
-            PasswordChar = IsPasswordHidden ? '•' : null;
-            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
+            if(exception is InvalidCredentialException)
+            {
+                _errorListViewModel.AddError("Invalid login or password");
+            }
+            else if(exception is NoConnectionException)
+            {
+                _errorListViewModel.AddError("Couldn't connect to server");
+            }
+        }
+        public async Task SetMessenger()
+        {
+            User user = new User { Login = Login, Password = _passwordInputViewModel.Password };
+            User? userToken = null;
+            
+            try
+            {
+                userToken = Messenger.SignIn(user.Login, user.Password);
+            }
+            catch
+            {
+                throw new NoConnectionException("Couldn't connect to server");
+            }
+
+            if (userToken != null)
+                SetMessengerCommand.Execute(userToken).Subscribe();
+            else
+                throw new InvalidCredentialException("Invalid credentials");
+
         }
     }
 }

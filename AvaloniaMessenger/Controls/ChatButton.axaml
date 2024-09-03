@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AvaloniaMessenger.Controls">
+  <Design.PreviewWith>
+    <controls:ChatButton/>
+  </Design.PreviewWith>
+  <Style Selector="controls|ChatButton">
+    <!-- Set Defaults -->
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <TextBlock Text="{TemplateBinding ChatName}"
+                     FontSize="20"
+                     FontWeight="DemiBold"/>
+
+          <TextBlock Text="{TemplateBinding LastMessage}"
+                     FontSize="16"
+                     FontWeight="Light"
+                     Foreground="Gray"/>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

@@ -9,8 +9,7 @@
              x:DataType="vm:SignInViewModel">
   <UserControl.Styles>
     <Style Selector="TextBox">
-      <Setter Property="MaxWidth" Value="30" />
-      <Setter Property="Margin" Value="4"/>
+      <Setter Property="Margin" Value="2"/>
       <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
     <Style Selector="Button">
@@ -22,7 +21,6 @@
     HorizontalAlignment="Center"
     VerticalAlignment="Center">
     <StackPanel>
-      
       <Label 
         HorizontalAlignment="Center" 
         FontSize="24">Garlic Messenger</Label>
@@ -37,33 +35,16 @@
                  Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>
         </TextBox.InnerLeftContent> </TextBox>
 
-      <DockPanel Margin="40,0,0,0">
-        <TextBox
-          PasswordChar="{Binding PasswordChar}"
-          Watermark="Password"
-          MinWidth="150"
-          Text="{Binding Password}">
-          <TextBox.InnerLeftContent>
-            <Image Height="25" 
-                   Width="25"  
-                   Source="{Binding Source={x:Static s:AssetManager.PasswordIcon}}"/>
-          </TextBox.InnerLeftContent>
-        </TextBox>
-        <Button
-          Command="{Binding TogglePasswordChar}"
-          Background="Transparent">
-          <Image Source="{Binding EyeIcon}"
-                 Width="20"
-                 Height="20"/>
-        </Button>
-      </DockPanel>
+      <UserControl Margin="40,0,0,0" 
+                   Content="{Binding PasswordInput}"></UserControl>
+      
+      <UserControl Margin="40,0,0,0" Content="{Binding ErrorList}"/>
       
       <Button 
         Command="{Binding SignInCommand}">Sign In</Button>
       
       <Button
         Command="{Binding SignUpCommand}">Sign Up</Button>
-      
     </StackPanel>
   </DockPanel>
 </UserControl>

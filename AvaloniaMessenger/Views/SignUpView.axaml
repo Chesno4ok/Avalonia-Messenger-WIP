@@ -9,9 +9,9 @@
              x:DataType="vm:SignUpViewModel">
   <UserControl.Styles>
     <Style Selector="TextBox">
-      <Setter Property="Width" Value="160" />
-      <Setter Property="Margin" Value="4"/>
-      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="MinWidth" Value="150" />
+      <Setter Property="Margin" Value="2"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
     <Style Selector="Button">
       <Setter Property="Margin" Value="1"/>
@@ -27,115 +27,37 @@
         HorizontalAlignment="Center"
         FontSize="24">Registration</Label>
       <TextBox
-        HorizontalAlignment="Left"
+        
         Watermark="Username"
         Text="{Binding Username}">
         <TextBox.InnerLeftContent>
           <Image Height="25"
-                 Width="25"
+                 Width="35"
                  Source="{Binding Source={x:Static s:AssetManager.UsernameIcon}}"/>
         </TextBox.InnerLeftContent>
       </TextBox>
+      
       <TextBox
         Watermark="Login"
         Text="{Binding Login}">
         <TextBox.InnerLeftContent>
           <Image Height="25"
-                 Width="25"
+                 Width="35"
                  Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>
         </TextBox.InnerLeftContent>
       </TextBox>
 
-      <ListBox ItemsSource="{Binding LoginErrors}"
-               Background="Transparent"
-               IsEnabled="False">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel>
-              <Label
-                Margin="0"
-                HorizontalAlignment="Center"
-                FontSize="12"
-                FontStyle="Italic"
-                Content="{Binding}"
-                Foreground="Red"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+      <UserControl Margin="48,0,0,0" Content="{Binding LoginErrors}"/>
 
-      <WrapPanel HorizontalAlignment="Left">
-        <TextBox 
-          PasswordChar="{Binding PasswordChar}"
-          Watermark="Password"
-          Text="{Binding Password}">
-          <TextBox.InnerLeftContent>
-            <Image Height="25"
-                   Width="25"
-                   Source="{Binding Source={x:Static s:AssetManager.PasswordIcon}}"/>
-          </TextBox.InnerLeftContent>
-        </TextBox>
-        <Button
-          Command="{Binding TogglePasswordChar}"
-          Background="Transparent">
-          <Image Source="{Binding EyeIcon}"
-                 Width="20"
-                 Height="20"/>
-        </Button>
-      </WrapPanel>
-
-
-      <ListBox ItemsSource="{Binding PasswordErrors}"
-               Background="Transparent"
-               IsEnabled="False" ZIndex="5">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel HorizontalAlignment="Left" ZIndex="5">
-              <TextBlock
-                
-                ZIndex="5"
-                HorizontalAlignment="Left"
-                FontSize="12"
-                TextWrapping="WrapWithOverflow"
-                FontStyle="Italic"
-                Text="{Binding}"
-                Foreground="Red"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+      <UserControl Margin="48,0,0,0" Content="{Binding Password}"/>
+      <UserControl Margin="48,0,0,0"  Content="{Binding PasswordErrors}"/>
       
-      <TextBox
-          PasswordChar="{Binding PasswordChar}"
-          Watermark="Repeat password"
-          MinWidth="150"
-          Text="{Binding RepeatPassword}">
-        <TextBox.InnerLeftContent>
-          <Image Height="25"
-                 Width="25"
-                 Source="{Binding Source={x:Static s:AssetManager.PasswordIcon}}"/>
-        </TextBox.InnerLeftContent>
-      </TextBox>
-
-      <ListBox ItemsSource="{Binding RepeatPasswordErrors}"
-               Background="Transparent"
-               IsEnabled="False">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel>
-              <Label
-                Margin="0"
-                HorizontalAlignment="Center"
-                FontSize="12"
-                FontStyle="Italic"
-                Content="{Binding}"
-                Foreground="Red"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+      <UserControl Margin="48,0,0,0" Content="{Binding RepeatPassword}"/>
+      <UserControl Margin="48,0,0,0"  Content="{Binding RepeatPasswordErrors}" />
+      
     
       <Button
+        ToolTip.Tip="Enter "
         Command="{Binding SignUpCommand}">Sign up</Button>
 
       <ListBox ItemsSource="{Binding SignUpErrors}"

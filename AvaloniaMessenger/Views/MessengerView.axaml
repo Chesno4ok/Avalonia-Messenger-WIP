@@ -6,21 +6,103 @@
              x:Class="AvaloniaMessenger.Views.MessengerView"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
+             xmlns:controls="clr-namespace:AvaloniaMessenger.Controls"
+             
              x:DataType="vm:MessengerViewModel">
-  <Grid ColumnDefinitions="*,1.5*" RowDefinitions="*,10*">
-    <StackPanel Name="ChatPanel" Grid.Row="1" Background="AntiqueWhite">
-      
-    </StackPanel>
+  <UserControl.Styles>
+    <Style Selector="TextBox#MessageTextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="*,1.5*" RowDefinitions="35,10*,35">
+    <Grid Name="ChatPanel" Grid.Row="1" Grid.RowSpan="2" Background="AntiqueWhite">
+      <ListBox ItemsSource="{Binding ChatList}" 
+               SelectedItem="{Binding SelectedChat}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <controls:ChatButton ChatName="{Binding ChatName}" LastMessage="{Binding LastMessage}"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
     
-    <StackPanel Name="MessagePanel" Grid.Row="1" Grid.Column="1" Background="AliceBlue">
-
-    </StackPanel>
-
-    <DockPanel Name="ToolPanel" Background="PowderBlue">
-      
-    </DockPanel>
-    <DockPanel Name="ChatHeaderPanel" Grid.Column="1" Background="PaleGoldenrod">
+    <UserControl
+      Grid.RowSpan="3"
+      Grid.ColumnSpan="2"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      ZIndex="2"
+      Content="{Binding PopUpWindow}"/>
     
+    <controls:SideBarMenu
+      CommandList="{Binding SideBarButtons}"
+      ToggleSideBarCommand="{Binding ToggleSideBarCommand, Mode=TwoWay}"
+      Name="SideBarMenu"
+      IsMenuEnbabled="False"
+      HorizontalAlignment="Stretch"
+      BorderThickness="0"
+      Grid.RowSpan="3"
+      Grid.ColumnSpan="2"
+      IsEnabled="True"
+      ZIndex="2"
+      />
+    
+      <ListBox
+               Name="MessagePanel"
+               Grid.Row="1" Grid.Column="1"
+               VerticalAlignment="Stretch"
+               ItemsSource="{Binding Messages}"
+               Selection=""
+               ScrollViewer.VerticalScrollBarVisibility="Visible" >
+        
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <controls:MessageTemplate 
+                HorizontalAlignment="Left"
+                TextMessage="{Binding Text}" 
+                Sender="{Binding Sender}" 
+                Time="{Binding Time}"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+    <DockPanel Name="ToolPanel" Background="White">
+      <Button Content="|||" Command="{Binding ElementName=SideBarMenu, Path=ToggleSideBarCommand}"/>
     </DockPanel>
+    <DockPanel Name="ChatHeaderPanel" Grid.Column="1" Background="White">
+    </DockPanel>
+
+    <Grid Name="SendMessagePanel"
+               Grid.Column="1"
+               Grid.Row="2"
+               Background="White"
+          ColumnDefinitions="1*,0.05*">
+      <TextBox
+        
+        Height="25"
+        Name="MessageTextBox"
+        BorderBrush="Transparent"
+        BorderThickness="0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        TextWrapping="Wrap"
+        Watermark="Write a message..."
+        Text="{Binding MessageText}"/>
+        
+      <Button
+        Command="{Binding SendMessageCommand}"
+        Grid.Column="1"
+        Background="Transparent"
+        HorizontalAlignment="Right">
+        <Image Height="25"
+                 Width="25"
+                 Source="{Binding Source={x:Static s:AssetManager.SendIcon}}"/>
+      </Button>
+    </Grid>
+    
   </Grid>
 </UserControl>

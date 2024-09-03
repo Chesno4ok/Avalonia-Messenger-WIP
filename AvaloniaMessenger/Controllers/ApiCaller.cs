@@ -15,7 +15,7 @@ namespace AvaloniaMessenger.Controllers
     class ApiCaller
     {
         public Uri ServerUrl { get; set; }
-
+        // TODO: Make exceptions handler
         public ApiCaller(Uri serverUrl)
         {
             ServerUrl = serverUrl;
@@ -144,8 +144,8 @@ namespace AvaloniaMessenger.Controllers
             {
                 return default(T);
             }
-
-            var obj = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
+            string json = response.Content.ReadAsStringAsync().Result;
+            var obj = JsonConvert.DeserializeObject<T>(json);
 
             return obj;
         }

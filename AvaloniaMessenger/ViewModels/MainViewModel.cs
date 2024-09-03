@@ -9,6 +9,8 @@ using System.IO;
 using System.Security.Authentication;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using AvaloniaMessenger.Exceptions;
+using System.Threading.Tasks;
 
 namespace AvaloniaMessenger.ViewModels;
 
@@ -29,31 +31,24 @@ class MainViewModel : ViewModelBase
 
     MessengerController Messenger = new MessengerController(new Uri("https://localhost:7284"));
 
-       
     public MainViewModel()
     {   
         SetSignIn();
     }   
-    public void SetMessenger(User? user)
+    public void SetMessenger(User user)
     {
-        User? userToken = null;
-        try
-        {
-            userToken = Messenger.SignIn(user.Login, user.Password);
-        }
-        catch
-        {
+        var viewModel = new MessengerViewModel(user, Messenger, ReactiveCommand.Create(SetSignIn));
 
-        }
-        
-        if(userToken != null)
-            MainView = new MessengerView();
+        MainView = new MessengerView() { DataContext = viewModel };
+        viewModel.MessengerView = MainView as MessengerView;
+
+        (MainView as MessengerView).InitialiseEvents();
     }
     public void SetSignIn()
     {   
-        var viewModel = new SignInViewModel();
+        var viewModel = new SignInViewModel() { Messenger = Messenger };
 
-        viewModel.SignInCommand.Subscribe(user => SetMessenger(user));
+        viewModel.SetMessengerCommand = ReactiveCommand.Create<User>(user => SetMessenger(user));
         viewModel.SignUpCommand = ReactiveCommand.Create(() => { SetSignUp(); });
 
         MainView = new SignInView { DataContext = viewModel };
@@ -66,4 +61,5 @@ class MainViewModel : ViewModelBase
 
         MainView = new SignUpView { DataContext = viewModel };
     }
+    
 }

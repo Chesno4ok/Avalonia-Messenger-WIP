@@ -40,5 +40,14 @@ namespace AvaloniaMessenger.Assets
         private static string _usernameLight = _baseUri + "username_light.png";
         private static string _usernameDark = _baseUri + "username_dark.png";
 
+        public static Bitmap SendIcon { get => new Bitmap(AssetLoader.Open(new Uri(_isLightTheme ? _sendLight : _sendDark))); }
+        private static string _sendLight = _baseUri + "send_light.png";
+        private static string _sendDark = _baseUri + "send_dark.png";
+
+        public static Bitmap PaperClipIcon { get => new Bitmap(AssetLoader.Open(new Uri(_isLightTheme ? _clipLight : _clipDark))); }
+        private static string _clipLight = _baseUri + "clip_light.png";
+        private static string _clipDark = _baseUri + "clip_dark.png";
+
+
     }
 }

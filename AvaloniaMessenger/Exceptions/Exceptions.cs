@@ -16,4 +16,14 @@ namespace AvaloniaMessenger.Exceptions
             this.message = message;
         }
     }
+    class InvalidCredentialsException : Exception
+    {
+        string? message { get; set; }
+
+        public InvalidCredentialsException() { }
+        public InvalidCredentialsException(string? message)
+        {
+            this.message = message;
+        }
+    }
 }

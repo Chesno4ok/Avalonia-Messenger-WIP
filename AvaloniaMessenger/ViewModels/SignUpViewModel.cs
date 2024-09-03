@@ -12,18 +12,15 @@ using Avalonia.Collections;
 using Avalonia.Platform;
 using AvaloniaMessenger.Controllers;
 using AvaloniaMessenger.Assets;
+using AvaloniaMessenger.Views;
+using AvaloniaMessenger.ViewModels;
+using Avalonia.Threading;
 
 namespace AvaloniaMessenger.ViewModels
 {
     
     class SignUpViewModel : ViewModelBase
     {
-        public enum Problems
-        {
-            TooLong,
-            AlreadyExists
-        };
-
         private string _username = String.Empty;
         public string Username
         {
@@ -50,122 +47,149 @@ namespace AvaloniaMessenger.ViewModels
             }
         }
 
-        private string _password = String.Empty;
-        public string Password
+        // Password inputs
+        private PasswordInput _password = new();
+        public PasswordInputViewModel _passwordViewModel = new();
+        public PasswordInput Password
         {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _password, value);
-            }
+            get => _password;
+            set => this.RaiseAndSetIfChanged(ref _password, value);
         }
 
-        private string _repeatPassword = String.Empty;
-        public string RepeatPassword
+        private PasswordInput _repeatPassword = new ();
+        public PasswordInputViewModel _repeatPasswordViewModel = new() { Watermark = "Password Again"};
+        public PasswordInput RepeatPassword
         {
-            get
-            {
-                return _repeatPassword;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _repeatPassword, value);
-            }
+            get => _repeatPassword;
+            set => this.RaiseAndSetIfChanged(ref _repeatPassword, value);
         }
 
-        private bool _isPasswordHidden = true;
-        public bool IsPasswordHidden
-        {
-            get
-            {
-                return _isPasswordHidden;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isPasswordHidden, value);
-            }
-        }
+        // Errors
+        private ErrorListViewModel _loginErrorsViewModel = new();
+        private ErrorListView _loginErrors = new();
+        public ErrorListView LoginErrors { get => _loginErrors; set => this.RaiseAndSetIfChanged(ref _loginErrors, value); }
 
-          private char? _passwordChar = '•';
-        public char? PasswordChar
-        {
-            get
-            {
-                return _passwordChar;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _passwordChar, value);
-            }
-        }
+        private ErrorListViewModel _passwordErrorsViewModel = new();
+        private ErrorListView _passwordErrors = new();
+        public ErrorListView PasswordErrors { get => _passwordErrors; set => this.RaiseAndSetIfChanged(ref _passwordErrors, value); }
 
-        public IImage _eyeIcon;
-        public IImage EyeIcon
-        {
-            get
-            {
-                return _eyeIcon;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _eyeIcon, value);
-            }
-        }
+        private ErrorListViewModel _repeatErrorsViewModel = new();
+        private ErrorListView _repeatPasswordErrors = new();
+        public ErrorListView RepeatPasswordErrors { get => _repeatPasswordErrors; set => this.RaiseAndSetIfChanged(ref _repeatPasswordErrors, value); }
 
-        public AvaloniaList<string> LoginErrors { get; private set; } = new AvaloniaList<string>();
-        public AvaloniaList<string> PasswordErrors { get; private set; } = new AvaloniaList<string>();
-        public AvaloniaList<string> RepeatPasswordErrors { get; private set; } = new AvaloniaList<string>();
-        public AvaloniaList<string> SignInErrors { get; private set; } = new AvaloniaList<string>();
+        private ErrorListViewModel _signInErrorsViewModel = new();
+        private ErrorListView _signInErrors = new();
+        public ErrorListView SignInErrors { get => _signInErrors; set => this.RaiseAndSetIfChanged(ref _signInErrors, value); }
 
+        // Commands
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
         public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
-
+        // Timers
+        private DispatcherTimer _checkLoginTimer = new() {Interval = TimeSpan.FromMilliseconds(500) };
+        private DispatcherTimer _checkPasswordTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+        private DispatcherTimer _checkRepeatPasswordTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+        // Messenger Controller
         private MessengerController _messengerController { get; set; }
         public SignUpViewModel(MessengerController messengerController)
         {
+            // Password Inputs
+            Password.DataContext = _passwordViewModel;
+            RepeatPassword.DataContext = _repeatPasswordViewModel;
+
+            // Error lists
+            LoginErrors.DataContext = _loginErrorsViewModel;
+            PasswordErrors.DataContext = _passwordErrorsViewModel;
+            RepeatPasswordErrors.DataContext = _repeatErrorsViewModel;
+            SignInErrors.DataContext = _signInErrorsViewModel;
+
+            // Messenger Controller
             _messengerController = messengerController;
-            _eyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
 
-            this.WhenAnyValue(x => x.IsPasswordHidden).Subscribe(x => { ToggleEye(); });
-            this.WhenAnyValue(x => x.Login).Subscribe( x => { Task.Run(() => CheckLogin(Login)); });
-            this.WhenAnyValue(x => x.Password).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
-            this.WhenAnyValue(x => x.RepeatPassword).Subscribe(x => { CheckPassword(Password, RepeatPassword); });
-
+            // Commands
             var isValidObservable = this.WhenAnyValue(
-                l => l.Login, p => p.Password, rp => rp.RepeatPassword, u => u.Username,
+                l => l.Login, p => p._passwordViewModel.Password, rp => rp._repeatPasswordViewModel.Password, u => u.Username,
+
                 (l, p, rp, u) => !String.IsNullOrEmpty(l) 
                 && !String.IsNullOrEmpty(p) 
                 && !String.IsNullOrEmpty(rp) 
                 && !String.IsNullOrEmpty(u) 
-                && PasswordErrors.Count == 0
-                && LoginErrors.Count == 0
-                && RepeatPasswordErrors.Count == 0);
-            
-
+                && _passwordErrorsViewModel.ErrorList.Count() == 0
+                && _loginErrorsViewModel.ErrorList.Count() == 0
+                && _repeatErrorsViewModel.ErrorList.Count == 0);
             SignUpCommand = ReactiveCommand.Create(() => SignUp(), isValidObservable);
-            
-            TogglePasswordChar = ReactiveCommand.Create(() => { IsPasswordHidden = !IsPasswordHidden; });
+
+            this.WhenAnyValue(i => i.Login).Subscribe(i => _checkLoginTimer.IsEnabled = true);
+            this.WhenAnyValue(i => i._passwordViewModel.Password).Subscribe(i => TogglePasswordCheck());
+            this.WhenAnyValue(i => i._repeatPasswordViewModel.Password).Subscribe(i => ToggleRepeatPasswordCheck());
+
+            // Timers
+            _checkLoginTimer.Tick += CheckLoginTick;
+            _checkPasswordTimer.Tick += CheckPasswordTick;
+            _checkRepeatPasswordTimer.Tick += CheckRepeatPasswordTick;
         }
-        public void ToggleEye()
+        private void TogglePasswordCheck()
         {
-            PasswordChar = IsPasswordHidden ? '•' : null;
-            EyeIcon = new Bitmap(AssetLoader.Open(new Uri(AssetManager.GetEyeIconPath(IsPasswordHidden))));
+            if (_passwordViewModel.Password != "")
+                _checkPasswordTimer.IsEnabled = true;
         }
+        private void ToggleRepeatPasswordCheck()
+        {
+            if (_repeatPasswordViewModel.Password != "")
+                _checkRepeatPasswordTimer.IsEnabled = true;
+        }
+        private void CheckRepeatPasswordTick(object? sender, EventArgs e)
+        {
+            string password = _passwordViewModel.Password;
+            string repeatPassword = _repeatPasswordViewModel.Password;
+
+            if (password != repeatPassword)
+                _repeatErrorsViewModel.AddError("Passwords must be the same");
+            else
+                _repeatErrorsViewModel.RemoveError("Passwords must be the same");
+        }
+
+        private void CheckPasswordTick(object? sender, EventArgs e)
+        {
+            string password = _passwordViewModel.Password;
+
+            if (password.Length < 8)
+                _passwordErrorsViewModel.AddError("At least 8 symbols");
+            else
+                _passwordErrorsViewModel.RemoveError("At least 8 symbols");
+
+            if (!password.Any(i => Char.IsUpper(i)))
+                _passwordErrorsViewModel.AddError("At least 1 uppercase letter");
+            else
+                _passwordErrorsViewModel.RemoveError("At least 1 uppercase letter");
+
+            if (!password.Any(i => Char.IsNumber(i)))
+                _passwordErrorsViewModel.AddError("At least 1 number");
+            else
+                _passwordErrorsViewModel.RemoveError("At least 1 number");
+
+            if (!password.Any(i => !Char.IsLetterOrDigit(i)))
+                _passwordErrorsViewModel.AddError("At least 1 special symbol");
+            else
+                _passwordErrorsViewModel.RemoveError("At least 1 special symbol");
+        }
+
+        private void CheckLoginTick(object? sender, EventArgs e)
+        {
+            //Task.Run(() => CheckLogin(Login));
+            CheckLogin(Login);
+        }
+
         public void SignUp()
         {
-            SignInErrors.Clear();
-
             var user = new User()
             {
                 Login = this.Login,
-                Password = this.Password,
+                Password = this._passwordViewModel.Password,
                 Name = this.Username
             };
 
+            _signInErrorsViewModel.RemoveError("Failed to sign up");
             try
             {
                 _messengerController.SignUp(user.Name, user.Login, user.Password);
@@ -174,7 +198,7 @@ namespace AvaloniaMessenger.ViewModels
             }
             catch
             {
-                SignInErrors.Add("Failed to sign up");
+                _signInErrorsViewModel.AddError("Failed to sign up");
             }
         }
 
@@ -183,35 +207,16 @@ namespace AvaloniaMessenger.ViewModels
             if (login == "")
                 return;
 
-            if (_messengerController.CheckLogin(login) && !LoginErrors.Any(i => i == "Login already exists"))
-                LoginErrors.Add("Login already exists");
+            if (_messengerController.CheckLogin(login))
+                _loginErrorsViewModel.AddError("Login already exists");
             else
-                LoginErrors.Remove("Login already exists");    
+                _loginErrorsViewModel.RemoveError("Login already exists");    
 
-            if (Login.Length < 4 && !LoginErrors.Any(i => i == "Login is too short"))
-                LoginErrors.Add("Login is too short");
-            else if(Login.Length > 3 && LoginErrors.Any(i => i == "Login is too short"))
-                LoginErrors.Remove("Login is too short");
+            if (Login.Length < 4 )
+                _loginErrorsViewModel.AddError("Login is too short");
+            else if(Login.Length > 3)
+                _loginErrorsViewModel.RemoveError("Login is too short");
 
-        }
-        public void CheckPassword(string password, string repeatPassword)
-        {
-            PasswordErrors.Clear();
-            RepeatPasswordErrors.Clear();
-
-            if (String.IsNullOrEmpty(password))
-                return;
-
-            if (password.Length < 8)
-                PasswordErrors.Add("At least 8 symbols");
-            if (!password.Any(i => Char.IsUpper(i)))
-                PasswordErrors.Add("At least 1 uppercase letter");
-            if (!password.Any(i => Char.IsNumber(i)))
-                PasswordErrors.Add("At least 1 number");
-            if (!password.Any(i => !Char.IsLetterOrDigit(i)))
-                PasswordErrors.Add("At least 1 special symbol");
-            if (password != repeatPassword)
-                RepeatPasswordErrors.Add("Passwords must be the same");
         }
     }
 

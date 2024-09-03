@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             Background="rgba(0, 0, 0, 0.47)"
+             x:Class="AvaloniaMessenger.Views.ReconnectingView">
+  <StackPanel
+    Background="White"
+    VerticalAlignment="Center"
+    HorizontalAlignment="Center"
+    >
+    <TextBlock Text="Failed to connect to the server.
+               Trying to reconnect. &#10;Please Wait. &#10;And look at the dinosaur"
+               TextWrapping="Wrap" 
+               TextAlignment="Center"
+               FontSize="15"/>
+    <TextBlock Text="              
+      __&#10;
+                  /  _)&#10;
+     _.----._/  /&#10;
+     /            /&#10;
+ __/  (  |   (  |&#10;
+/__.-'|_|--|_|&#10;
+"
+               TextAlignment="Left"
+               TextWrapping="NoWrap"
+               FontSize="15"
+               />
+    
+  </StackPanel>
+</UserControl>

@@ -1,25 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AvaloniaMessenger.Models;
 
-[JsonObject(MemberSerialization.OptIn)]
 public partial class Message
 {
-    [JsonProperty]
     public int Id { get; set; }
-    [JsonProperty]
+
     public int User { get; set; }
-    [JsonProperty]
+
     public int ChatId { get; set; }
-    [JsonProperty]
-    public DateTime Date { get; set; }
-    [JsonProperty]
-    public byte[]? Content { get; set; }
-    [JsonProperty]
-    public string Type { get; set; } = null!;
-    [JsonProperty]
-    public bool IsRead { get; set; }
+
+    public DateTimeOffset Date { get; set; }
+
+    public short IsRead { get; set; }
+
+    public string? Text { get; set; }
+    public string Time { get => Date.ToLocalTime().ToString("HH:mm"); }
+    public string Sender { get; set; }
 
 }

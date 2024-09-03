@@ -12,4 +12,5 @@ public partial class Chat
 
     [JsonProperty]
     public string ChatName { get; set; } = null!;
+    public string? LastMessage { get; set; }
 }

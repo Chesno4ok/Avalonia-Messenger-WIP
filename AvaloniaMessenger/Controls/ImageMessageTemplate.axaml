@@ -1,0 +1,16 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AvaloniaMessenger.Controls">
+  <Design.PreviewWith>
+    <controls:ImageMessageTemplate />
+  </Design.PreviewWith>
+
+  <Style Selector="controls|ImageMessageTemplate">
+    <!-- Set Defaults -->
+    <Setter Property="Template">
+      <ControlTemplate>
+        <TextBlock Text="Image" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
