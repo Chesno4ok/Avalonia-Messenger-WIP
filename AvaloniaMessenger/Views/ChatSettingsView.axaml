@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             Background="rgba(0, 0, 0, 0.47)"
+             x:Class="AvaloniaMessenger.Views.ChatSettingsView">
+  <Grid
+    Background="Transparent"
+    PointerPressed="Grid_PointerPressed"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <Border
+      Height="550"
+      Width="400"
+      Background="White"
+      CornerRadius="20"
+      Padding="10"
+      >
+      <StackPanel
+      Height="500"
+      Width="400"
+      Background="White"
+      VerticalAlignment="Center"
+      HorizontalAlignment="Center">
+        <TextBlock
+          Text="Chat Name"
+          FontSize="30"/>
+        <TextBlock
+          Text="Participants"
+          FontSize="20"/>
+        <ListBox
+          ItemsSource="{Binding Users}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Name}"/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <DockPanel>
+          <Button
+            Command="{Binding LeaveChatCommand}"
+            Background="Transparent"
+            Content="Leave"
+            Foreground="Red"/>
+        </DockPanel>
+      </StackPanel>
+
+    </Border>
+  </Grid>
+</UserControl>

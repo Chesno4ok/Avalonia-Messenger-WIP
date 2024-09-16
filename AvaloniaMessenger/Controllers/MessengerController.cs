@@ -185,6 +185,29 @@ namespace AvaloniaMessenger.Controllers
                 return false;
             }
         }
+        [QueryInfo("userId","token","chatId")]
+        public void LeaveChat(int userId, string token, int chatId)
+        {
+            var query = queryBuilder.GetQueryString(userId, token, chatId);
+
+            var message = apiCaller.PostRequest("Chat/leave_chat?", query, new StringContent(""));
+        }
+
+        [QueryInfo("userId", "token", "chatId")]
+        public Chat? GetChat(int userId, string token, int chatId)
+        {
+            var query = queryBuilder.GetQueryString(userId, token, chatId);
+
+            try
+            {
+                return apiCaller.GetRequest<Chat>("Chat/get_chat?", query);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
 
         #endregion
 

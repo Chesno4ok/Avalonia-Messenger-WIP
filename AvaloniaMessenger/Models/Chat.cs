@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using DynamicData.Cache.Internal;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace AvaloniaMessenger.Models;
 
 [JsonObject(MemberSerialization.OptIn)]
-public partial class Chat
+public class Chat
 {
     [JsonProperty]
     public int Id { get; set; }
@@ -13,4 +14,5 @@ public partial class Chat
     [JsonProperty]
     public string ChatName { get; set; } = null!;
     public string? LastMessage { get; set; }
+
 }

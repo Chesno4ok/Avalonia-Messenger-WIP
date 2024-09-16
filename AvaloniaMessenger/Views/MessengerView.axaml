@@ -6,6 +6,7 @@
              x:Class="AvaloniaMessenger.Views.MessengerView"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
+             Background="WhiteSmoke"
              xmlns:controls="clr-namespace:AvaloniaMessenger.Controls"
              
              x:DataType="vm:MessengerViewModel">
@@ -21,7 +22,8 @@
         <ListBox.ItemTemplate>
           <DataTemplate>
             <StackPanel>
-              <controls:ChatButton ChatName="{Binding ChatName}" LastMessage="{Binding LastMessage}"/>
+              <controls:ChatButton ChatName="{Binding ChatName}" 
+                                   LastMessage="{Binding LastMessage}"/>
             </StackPanel>
           </DataTemplate>
         </ListBox.ItemTemplate>
@@ -50,20 +52,26 @@
       />
     
       <ListBox
+               Background="WhiteSmoke"
                Name="MessagePanel"
                Grid.Row="1" Grid.Column="1"
                VerticalAlignment="Stretch"
                ItemsSource="{Binding Messages}"
                Selection=""
                ScrollViewer.VerticalScrollBarVisibility="Visible" >
-        
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0,5,0,0"/>
+            <Setter Property="Padding" Value="0"/>
+          </Style>
+        </ListBox.Styles>
         <ListBox.ItemTemplate>
           <DataTemplate>
             <StackPanel>
-              <controls:MessageTemplate 
-                HorizontalAlignment="Left"
-                TextMessage="{Binding Text}" 
-                Sender="{Binding Sender}" 
+                <controls:MessageTemplate
+                VerticalAlignment="Stretch"
+                TextMessage="{Binding Text}"
+                Sender="{Binding Sender}"
                 Time="{Binding Time}"/>
             </StackPanel>
           </DataTemplate>
@@ -74,6 +82,10 @@
       <Button Content="|||" Command="{Binding ElementName=SideBarMenu, Path=ToggleSideBarCommand}"/>
     </DockPanel>
     <DockPanel Name="ChatHeaderPanel" Grid.Column="1" Background="White">
+    <Button Content="{Binding SelectedChat.ChatName}" 
+            Command="{Binding OpenChatSettingsCommand}" 
+            Background="Transparent"
+            FontSize="20"/>
     </DockPanel>
 
     <Grid Name="SendMessagePanel"

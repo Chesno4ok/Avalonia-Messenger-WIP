@@ -15,21 +15,25 @@ using System.Reflection;
 using System.Net.NetworkInformation;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
+using AvaloniaMessenger.ViewModels;
 
 namespace AvaloniaMessenger.Controllers
 {
     internal class WebSocketController
     {
         public ClientWebSocket WebSocket = new();
+        public WebSocketMessageReceiver WebSocketReceiver;
+
         public ReactiveCommand<Message, Unit> LoadNewMessagesCommand;
-        public ReactiveCommand<Chat, Unit> LoadNewChatCommand;
-        public ReactiveCommand<ClientWebSocket, Unit> ConnectionFailedCommand; 
-        public delegate void NewMessage(Message message);
-        public event NewMessage? NotifyNewMessage;
+        public ReactiveCommand<ChatUser, Unit> LoadNewChatCommand;
+        public ReactiveCommand<Chat, Unit> DeleteChatCommand;
+        public ReactiveCommand<ClientWebSocket, Unit> ConnectionFailedCommand;
+
         private string connectionString;
         public WebSocketController(string connectionString)
         {
             this.connectionString = connectionString;
+            WebSocketReceiver = new(this);
             SetWebSocket(connectionString);
         }
         private async Task SetWebSocket(string connectionString)
@@ -106,43 +110,25 @@ namespace AvaloniaMessenger.Controllers
 
                 var jsonObj = JsonObject.Parse(messageJson);
 
-                var methods = GetType()
+                var methods = WebSocketReceiver.GetType()
                     .GetMethods().Where(i => i.GetCustomAttribute<TableNotification>() != null);
 
-                var method = methods.FirstOrDefault(i => i.GetCustomAttribute<TableNotification>().TableName == jsonObj["table"].ToString());
+                var method = methods.FirstOrDefault(i => 
+                i.GetCustomAttribute<TableNotification>().TableName == jsonObj["table"].ToString() &&
+                i.GetCustomAttribute<TableNotification>().Action == jsonObj["action"].ToString());
 
 
                 if (method == null)
-                    throw new Exception("Method to parse a payload was not found");
+                {
+                    Array.Clear(buffer);
+                    continue; 
+                }
 
-                method.Invoke(this, new object[]{ messageJson });
+                method.Invoke(WebSocketReceiver, new object[]{ messageJson });
 
                 Array.Clear(buffer);
             }
         }
-        [TableNotification("Messages")]
-        public void ProccessMessage(string notificationJson)
-        {
-            var notification = JsonConvert.DeserializeObject<DbNotification<Message>>(notificationJson);
-
-            if (notification == null)
-                return;
-
-            if (LoadNewMessagesCommand != null)
-                LoadNewMessagesCommand.Execute(notification.data).Subscribe();
-        }
-        [TableNotification("Chats")]
-        public void ProccessChat(string notificationJson)
-        {
-            var notification = JsonConvert.DeserializeObject<DbNotification<Chat>>(notificationJson);
-
-            if (notification == null)
-                return;
-
-            if (LoadNewChatCommand != null)
-                LoadNewChatCommand.Execute(notification.data).Subscribe();
-        }
-
         public async Task SendMessage(Message message)
         {
             var sendBuffer = new byte[1024 * 4];
@@ -157,14 +143,6 @@ namespace AvaloniaMessenger.Controllers
 
                 Array.Clear(sendBuffer);
             }
-        }
-    }
-    class TableNotification : Attribute
-    {
-        public string TableName;
-        public TableNotification(string tableName)
-        {
-            TableName = tableName;
         }
     }
 }

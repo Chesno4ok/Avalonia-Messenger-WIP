@@ -11,69 +11,73 @@
 
   <Grid
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"
     PointerPressed="Grid_PointerPressed"
     Background="Transparent"
     ZIndex="2">
-    <StackPanel
-    
-    MaxHeight="500"
-    Background="White"
-    Width="250"
-    HorizontalAlignment="Center"
-    VerticalAlignment="Center"
-    ZIndex="1">
+    <Border
+      Width="260"
+      MaxHeight="500"
+      Background="White"
+      CornerRadius="20"
+      Padding="15">
+      <StackPanel
+        Background="White"
+        Width="250"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        ZIndex="1">
 
 
 
-      <TextBlock Text="Enter chat name"/>
-      <TextBox Watermark="Chat Name" Text="{Binding ChatName}"/>
+        <TextBlock Text="Enter chat name"/>
+        <TextBox Watermark="Chat Name" Text="{Binding ChatName}"/>
 
-      <ListBox
+        <ListBox
       
-        MaxHeight="150"
-        SelectedItem="{Binding RemovedUserListItem}"
-        ItemsSource="{Binding AddedUsersList}">
+          MaxHeight="150"
+          SelectedItem="{Binding RemovedUserListItem}"
+          ItemsSource="{Binding AddedUsersList}">
 
-        <ListBox.Styles>
-          <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="rgba(252, 120, 120, 1)" />
-          </Style>
-        </ListBox.Styles>
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+              <Setter Property="Background" Value="rgba(252, 120, 120, 1)" />
+            </Style>
+          </ListBox.Styles>
 
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <DockPanel>
-              <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <DockPanel>
+                <TextBlock Text="{Binding Name}"/>
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
 
-      <TextBlock Text="Add users to chat" Margin="0,15,0,0"/>
-      <TextBox Watermark="Enter username" Text="{Binding SearchField}"/>
+        <TextBlock Text="Add users to chat" Margin="0,15,0,0"/>
+        <TextBox Watermark="Enter username" Text="{Binding SearchField}"/>
 
-      <ListBox
-        MaxHeight="150"
-        Name="UserSearchList"
-        SelectionMode="Single"
-        SelectedItem="{Binding ChosenUserListItem}"
-        ItemsSource="{Binding SearchUsersList}">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel>
-              <TextBlock Text="{Binding Name, Mode=TwoWay}"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-      <DockPanel>
+        <ListBox
+          MaxHeight="150"
+          Name="UserSearchList"
+          SelectionMode="Single"
+          SelectedItem="{Binding ChosenUserListItem}"
+          ItemsSource="{Binding SearchUsersList}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel>
+                <TextBlock Text="{Binding Name, Mode=TwoWay}"/>
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <DockPanel>
 
-        <Button Content="Create" Command="{Binding CreateNewChatCommand}"/>
-        <Button Content="Cancel" Command="{Binding CloseViewCommand}"/>
-      </DockPanel>
+          <Button Content="Create" Command="{Binding CreateNewChatCommand}"/>
+          <Button Content="Cancel" Command="{Binding CloseViewCommand}"/>
+        </DockPanel>
 
-    </StackPanel>
+      </StackPanel>
 
+    </Border>
   </Grid>
 </UserControl>

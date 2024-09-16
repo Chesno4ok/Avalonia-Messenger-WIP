@@ -21,6 +21,7 @@ namespace AvaloniaMessenger.Views
         private Vector? _scrollHeight;
         private bool _saveScroll;
         private bool _addingNewMessages;
+        private bool _allMessagesLoaded = false;
 
         public MessengerView()
         {
@@ -68,21 +69,24 @@ namespace AvaloniaMessenger.Views
         {
             var sv = sender as ScrollViewer;
             var vm = DataContext as MessengerViewModel;
+            var maxScrollHeight = await sv.GetObservable(ScrollViewer.ScrollBarMaximumProperty).FirstAsync();
+
+            if (vm.EndOfChat == true)
+                return;
 
             if (sv.Offset.Y != 0 || vm.SelectedChat == null || vm.Messages.Count == 0)
                 return;
 
             _addingNewMessages = false;
-            var maxScrollHeight = await sv.GetObservable(ScrollViewer.ScrollBarMaximumProperty).FirstAsync();
+            
             _scrollHeight = maxScrollHeight;
 
-            
             vm.LoadPreviousMessagesCommand.Execute().Subscribe();
 
             _saveScroll = true;
             sv.Offset = new Vector(0, 1);
         }
-        private async void ScrollOnIncomingMessages()
+        private  void ScrollOnIncomingMessages()
         {
             Dispatcher.UIThread.Post(() => ScrollToBottom());
         }
