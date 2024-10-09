@@ -78,7 +78,7 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> OpenChatSettingsCommand { get; set; }
         // Additional properties
         public MessengerView MessengerView;
-        public WebSocketController WebSocket;
+        public SignalRController SignalRController;
         public bool EndOfChat = false;
 
         // Events
@@ -91,16 +91,16 @@ namespace AvaloniaMessenger.ViewModels
             SelectedChat = null;
 
             // WebSocket
-            WebSocket = new WebSocketController($"wss://{messenger.apiCaller.ServerUrl.Host}:{messenger.apiCaller.ServerUrl.Port}" +
-                $"/Message/ws_exchange_messages?userId={user.id}&token={user.Token}");
-            WebSocket.LoadNewMessagesCommand = ReactiveCommand.Create<Message>(m => OnNewMessage(m));
-            WebSocket.LoadNewChatCommand = ReactiveCommand.Create<ChatUser>(ch => OnNewChat(ch));
-            WebSocket.ConnectionFailedCommand = ReactiveCommand.CreateFromTask<ClientWebSocket>(ws => OnConnectionFailed(ws));
-            WebSocket.DeleteChatCommand = ReactiveCommand.Create<Chat>(ch => DeleteChat(ch));
+            SignalRController = new("https://localhost:7284/chat", user.Token);
+            SignalRController.LoadNewMessagesCommand = ReactiveCommand.Create<Message>(m => OnNewMessage(m));
+            SignalRController.LoadNewChatCommand = ReactiveCommand.Create<Chat>(ch => OnNewChat(ch));
+            SignalRController.ConnectionFailedCommand = ReactiveCommand.CreateFromTask(OnConnectionFailed);
+            SignalRController.DeleteChatCommand = ReactiveCommand.Create<Chat>(ch => DeleteChat(ch));
 
             // Commands and Subscribes
             SendMessageCommand = ReactiveCommand.CreateFromTask(SendMessage, null);
             OpenChatSettingsCommand = ReactiveCommand.Create(OpenChatSettings);
+            
             var canLoadPreviousMessages = this.WhenAnyValue(m => m.Messages, ch => ch.SelectedChat, (m, ch) => m.Count == 0);
             LoadPreviousMessagesCommand = ReactiveCommand.CreateFromTask(LoadPreviousMessages, canLoadPreviousMessages);
 
@@ -122,7 +122,7 @@ namespace AvaloniaMessenger.ViewModels
         }
         private void OpenChatSettings()
         {
-            var vm = new ChatSettingsViewModel(messenger, user, SelectedChat)
+            var vm = new ChatSettingsViewModel(messenger,SignalRController, user, SelectedChat)
             {
                 CloseChatSettings = ReactiveCommand.Create(() => ClosePopUpWindow())
             };
@@ -153,6 +153,7 @@ namespace AvaloniaMessenger.ViewModels
 
                 var vm = new ChatCreationViewModel();
                 vm.Messenger = messenger;
+                vm.SignalRController = SignalRController;
                 vm.CurrentUser = user;
                 vm.CloseViewCommand = ReactiveCommand.Create(ClosePopUpWindow);
 
@@ -182,7 +183,7 @@ namespace AvaloniaMessenger.ViewModels
         {
             int firstId = Messages[0].Id;
 
-            var newMessages = messenger.GetPreviousMessages(user.id, user.Token, SelectedChat.Id, firstId, 10);
+            var newMessages = messenger.GetPreviousMessages(user.Id, SelectedChat.Id, firstId, 10);
 
             if(newMessages.Length == 0)
             {
@@ -200,32 +201,34 @@ namespace AvaloniaMessenger.ViewModels
             var message = new Message
             {
                 ChatId = SelectedChat.Id,
-                User = user.id,
+                UserId = user.Id,
                 Text = MessageText
             };
 
             MessageText = "";
-            await WebSocket.SendMessage(message);
+            await SignalRController.SendMessage(message);
         }
-        private void OnNewChat(ChatUser chatUser)
+        private void OnNewChat(Chat chat)
         {
-            var chat = messenger.GetChat(user.id, user.Token, chatUser.ChatId);
-
             ChatList.Add(chat);
         }
         private void OnNewMessage(Message message)
         {
-            message.Sender = messenger.GetUser(message.User).Name;
+            message.Sender = _userList.FirstOrDefault(i => i.Id == message.UserId).Name;
 
             LoadNewMessagesScrollCommand.Execute().Subscribe();
 
             if (SelectedChat == null)
                 return;
 
-            if(message.ChatId == SelectedChat.Id)
+            var oldMessage = Messages.FirstOrDefault(i => i.Id == message.Id);
+
+            if (oldMessage != null)
+                oldMessage = message;
+            else if(message.ChatId == SelectedChat.Id)
                 Messages.Add(message);
         }
-        private async Task OnConnectionFailed(ClientWebSocket webSocket)
+        private async Task OnConnectionFailed()
         {
             var buffer = PopUpWindow;
 
@@ -234,11 +237,6 @@ namespace AvaloniaMessenger.ViewModels
                 PopUpWindow = null;
                 PopUpWindow = new ReconnectingView();
             });
-
-            while(WebSocket.WebSocket.State != WebSocketState.Open)
-            {
-                
-            }
 
             Dispatcher.UIThread.Post(() => PopUpWindow = buffer);
 
@@ -249,10 +247,19 @@ namespace AvaloniaMessenger.ViewModels
             if (selectedChat == null)
                 return;
 
+            var chat = messenger.GetChat(selectedChat.Id);
+            if(chat.ChatUsers.All(i => i.UserId != user.Id))
+            {
+                SelectedChat = null;
+                ChatList.Remove(ChatList.FirstOrDefault(i => i.Id == chat.Id));
+                Messages.Clear();
+                return;
+            }
+
             LoadNewMessagesScrollCommand.Execute().Subscribe();
             EndOfChat = false;
             Messages.Clear();
-            Message[]? messages = messenger.GetLastMessages(user.id, user.Token, selectedChat.Id, 20);
+            Message[]? messages = messenger.GetLastMessages(user.Id, selectedChat.Id, 20);
 
             messages = MarkSenders(messages);
 
@@ -261,18 +268,18 @@ namespace AvaloniaMessenger.ViewModels
         }
         private Message[] MarkSenders(IEnumerable<Message> messages)
         {
-            _userList = new List<User>(messenger.GetChatUsers(user.id, user.Token, SelectedChat.Id));
+            _userList = new List<User>(messenger.GetChatUsers(user.Id, SelectedChat.Id));
 
             foreach (var m in messages)
             {
-                m.Sender = _userList.FirstOrDefault(i => i.id == m.User).Name;
+                m.Sender = _userList.FirstOrDefault(i => i.Id == m.UserId).Name;
             }
 
             return messages.ToArray();
         }
         private void SetChats()
         {
-            ChatList.AddRange(messenger.GetChats(user.id.ToString(), user.Token));
+            ChatList.AddRange(messenger.GetChats(user.Id.ToString()));
         }
     }
 }

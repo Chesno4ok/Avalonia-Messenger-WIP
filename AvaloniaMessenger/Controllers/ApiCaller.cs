@@ -15,6 +15,7 @@ namespace AvaloniaMessenger.Controllers
     class ApiCaller
     {
         public Uri ServerUrl { get; set; }
+        public string Token = "1";
         // TODO: Make exceptions handler
         public ApiCaller(Uri serverUrl)
         {
@@ -31,6 +32,8 @@ namespace AvaloniaMessenger.Controllers
         public HttpResponseMessage GetRequest(string method, string query)
         {
             var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", Token);
+
             string requestUri = ServerUrl.ToString() + method + query;
 
             HttpResponseMessage response = new HttpResponseMessage();
@@ -73,6 +76,7 @@ namespace AvaloniaMessenger.Controllers
             HttpResponseMessage response = new HttpResponseMessage();
             using (var client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Authorization", Token);
                 try
                 {
                     response = client.GetAsync(requestUri).Result;
@@ -89,6 +93,8 @@ namespace AvaloniaMessenger.Controllers
             HttpResponseMessage response = new HttpResponseMessage();
             using (var client = new HttpClient())
             {
+
+                client.DefaultRequestHeaders.Add("Authorization", Token);
                 try
                 {
                     response = client.PostAsync(requestUri, content).Result;
@@ -105,6 +111,7 @@ namespace AvaloniaMessenger.Controllers
             HttpResponseMessage response = new HttpResponseMessage();
             using (var client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Authorization", Token);
                 try
                 {
                     response = client.PutAsync(requestUri, content).Result;
@@ -121,6 +128,7 @@ namespace AvaloniaMessenger.Controllers
             HttpResponseMessage response = new HttpResponseMessage();
             using (var client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Authorization", Token);
                 try
                 {
                     response = client.DeleteAsync(requestUri).Result;

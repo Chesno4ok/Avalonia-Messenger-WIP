@@ -28,23 +28,25 @@ namespace AvaloniaMessenger.ViewModels
         }
         public ReactiveCommand<Unit, Unit> LeaveChatCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CloseChatSettings { get; set; }
+        private SignalRController signalRController;
         private MessengerController messenger;
         private User currentUser;
 
-        public ChatSettingsViewModel(MessengerController messenger, User currentUser, Chat currentChat)
+        public ChatSettingsViewModel(MessengerController messenger, SignalRController signalRController, User currentUser, Chat currentChat)
         {
+            this.signalRController = signalRController;
             this.messenger = messenger;
             this.currentUser = currentUser;
             this.CurrentChat = currentChat;
 
-            var chatUsers = messenger.GetChatUsers(currentUser.id, currentUser.Token, CurrentChat.Id);
+            var chatUsers = messenger.GetChatUsers(currentUser.Id, CurrentChat.Id);
             Users.AddRange(chatUsers);
 
             LeaveChatCommand = ReactiveCommand.Create(() => LeaveChat());
         }
         private void LeaveChat()
         {
-            messenger.LeaveChat(currentUser.id, currentUser.Token, CurrentChat.Id);
+            signalRController.LeaveChat(CurrentChat.Id);
             CloseChatSettings.Execute().Subscribe();
         }
 

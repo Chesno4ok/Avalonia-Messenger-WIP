@@ -29,14 +29,18 @@ class MainViewModel : ViewModelBase
         }
     }
 
-    MessengerController Messenger = new MessengerController(new Uri("https://localhost:7284"));
+    MessengerController Messenger { get; set; }
 
     public MainViewModel()
-    {   
+    {
+
+        Messenger = new MessengerController(new Uri("https://localhost:7284"));
         SetSignIn();
     }   
     public void SetMessenger(User user)
     {
+        Messenger.apiCaller.Token = "Bearer " + user.Token;
+
         var viewModel = new MessengerViewModel(user, Messenger, ReactiveCommand.Create(SetSignIn));
 
         MainView = new MessengerView() { DataContext = viewModel };

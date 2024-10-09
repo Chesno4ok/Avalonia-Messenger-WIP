@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace AvaloniaMessenger.Models;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class Chat
 {
-    [JsonProperty]
     public int Id { get; set; }
 
-    [JsonProperty]
     public string ChatName { get; set; } = null!;
-    public string? LastMessage { get; set; }
+
+    public virtual ICollection<ChatUser> ChatUsers { get; set; } = new List<ChatUser>();
+
+    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
 }

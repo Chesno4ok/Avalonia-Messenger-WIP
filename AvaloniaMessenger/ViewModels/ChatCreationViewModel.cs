@@ -63,7 +63,6 @@ namespace AvaloniaMessenger.ViewModels
                 }
             }
         }
-
         public User? _removedUserListItem;
         public User? RemovedUserListItem
         {
@@ -74,6 +73,7 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> CreateNewChatCommand { get; set; }
         public ReactiveCommand<Unit, Unit> CloseViewCommand { get; set; }
 
+        public SignalRController SignalRController;
         public MessengerController Messenger;
         public User CurrentUser;
 
@@ -92,9 +92,26 @@ namespace AvaloniaMessenger.ViewModels
         }
         private void CreateNewChat()
         {
-            var jsonContent = JsonConvert.SerializeObject(AddedUsersList.Select(i => i.id));
-            var httpContent = new StringContent(jsonContent);
-            var result = Messenger.CreateChat(CurrentUser.id, CurrentUser.Token, ChatName, httpContent);
+            var chatUsers = new List<ChatUser>
+            {
+                new ChatUser { UserId = CurrentUser.Id }
+            };
+
+            foreach(var i in AddedUsersList)
+            {
+                chatUsers.Add(new ChatUser()
+                {
+                    UserId = i.Id
+                });
+            }
+
+            Chat newChat = new Chat
+            {
+                ChatName = ChatName,
+                ChatUsers = chatUsers
+            };
+
+            var result = SignalRController.CreateChat(newChat);
         }
         private void RemoveUser(User user)
         {
@@ -127,7 +144,7 @@ namespace AvaloniaMessenger.ViewModels
 
             var users = new List<User>(Messenger.SearchUser(username));
 
-            users.RemoveMany(users.Where(i => AddedUsersList.Any(u => u.id == i.id) || i.id == CurrentUser.id));
+            users.RemoveMany(users.Where(i => AddedUsersList.Any(u => u.Id == i.Id) || i.Id == CurrentUser.Id));
             
             SearchUsersList.AddRange(users);
         }

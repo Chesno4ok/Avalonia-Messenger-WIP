@@ -9,7 +9,7 @@ public partial class Message
 {
     public int Id { get; set; }
 
-    public int User { get; set; }
+    public int UserId { get; set; }
 
     public int ChatId { get; set; }
 
@@ -20,5 +20,6 @@ public partial class Message
     public string? Text { get; set; }
     public string Time { get => Date.ToLocalTime().ToString("HH:mm"); }
     public string Sender { get; set; }
+    public virtual User User { get; set; } = null!;
 
 }

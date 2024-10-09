@@ -25,15 +25,14 @@ namespace AvaloniaMessenger.Controllers
         public MessengerController(Uri serverInfo)
         {
             apiCaller = new ApiCaller(serverInfo);
-
             queryBuilder = new QueryStringBuilder();
         }
 
         #region MessageController
-        [QueryInfo("userId", "token", "chatId", "amount")]
-        public Message[]? GetLastMessages(int userId, string token, int chatId, int amount)
+        [QueryInfo("userId","chatId", "amount")]
+        public Message[]? GetLastMessages(int userId, int chatId, int amount)
         {
-            var query = queryBuilder.GetQueryString(userId, token, chatId, amount);
+            var query = queryBuilder.GetQueryString(userId, chatId, amount);
 
             try
             {
@@ -45,10 +44,10 @@ namespace AvaloniaMessenger.Controllers
             }
         }
 
-        [QueryInfo("userId", "token", "chatId","messageId", "amount")]
-        public Message[]? GetPreviousMessages(int userId, string token, int chatId, int messageId, int amount)
+        [QueryInfo("userId","chatId","messageId", "amount")]
+        public Message[]? GetPreviousMessages(int userId, int chatId, int messageId, int amount)
         {
-            var query = queryBuilder.GetQueryString(userId, token, chatId, messageId, amount);
+            var query = queryBuilder.GetQueryString(userId, chatId, messageId, amount);
 
             try
             {
@@ -70,9 +69,9 @@ namespace AvaloniaMessenger.Controllers
 
             var query = queryBuilder.GetQueryString(login, password);
 
-            user = apiCaller.GetRequest<User>("User/get_token?", query);
+            var response = apiCaller.GetRequest<User>("User/login?", query);
 
-            return user;
+            return response;
         }
 
         [QueryInfo("name", "login", "password")]
@@ -135,14 +134,15 @@ namespace AvaloniaMessenger.Controllers
         #endregion
 
         #region ChatController
-        [QueryInfo("userId", "token")]
-        public Chat[]? GetChats(string userId, string token)
+        [QueryInfo("userId")]
+        public Chat[]? GetChats(string userId)
         {
-            var query = queryBuilder.GetQueryString(userId, token);
+            var query = queryBuilder.GetQueryString(userId);
 
             try
             {
-                return apiCaller.GetRequest<Chat[]>("Chat/get_chats?", query);
+                var chats = apiCaller.GetRequest<Chat[]>("Chat/get_chats?", query);
+                return chats;
             }
             catch (HttpRequestException)
             {
@@ -150,10 +150,10 @@ namespace AvaloniaMessenger.Controllers
             }
         }
 
-        [QueryInfo("userId", "token", "chatId")]
-        public User[]? GetChatUsers(int userId, string token, int chatId)
+        [QueryInfo("userId", "chatId")]
+        public User[]? GetChatUsers(int userId, int chatId)
         {
-            var query = queryBuilder.GetQueryString(userId, token, chatId);
+            var query = queryBuilder.GetQueryString(userId, chatId);
 
             try
             {
@@ -165,12 +165,12 @@ namespace AvaloniaMessenger.Controllers
             }
         }
 
-        [QueryInfo("userId", "token", "chatName")]
-        public bool CreateChat(int userId, string token, string chatName, HttpContent content)
+        [QueryInfo("userId", "chatName")]
+        public bool CreateChat(int userId, string chatName, HttpContent content)
         {
             content.Headers.Clear();
 
-            var query = queryBuilder.GetQueryString(userId, token, chatName);
+            var query = queryBuilder.GetQueryString(userId,  chatName);
 
             content.Headers.Add("Content-Type", "application/json");
 
@@ -185,18 +185,18 @@ namespace AvaloniaMessenger.Controllers
                 return false;
             }
         }
-        [QueryInfo("userId","token","chatId")]
-        public void LeaveChat(int userId, string token, int chatId)
+        [QueryInfo("userId","chatId")]
+        public void LeaveChat(int userId, int chatId)
         {
-            var query = queryBuilder.GetQueryString(userId, token, chatId);
+            var query = queryBuilder.GetQueryString(userId, chatId);
 
             var message = apiCaller.PostRequest("Chat/leave_chat?", query, new StringContent(""));
         }
 
-        [QueryInfo("userId", "token", "chatId")]
-        public Chat? GetChat(int userId, string token, int chatId)
+        [QueryInfo("chatId")]
+        public Chat? GetChat(int chatId)
         {
-            var query = queryBuilder.GetQueryString(userId, token, chatId);
+            var query = queryBuilder.GetQueryString(chatId);
 
             try
             {

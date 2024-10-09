@@ -99,11 +99,13 @@ namespace AvaloniaMessenger.Views
 
             var scrollViewer = await _listBox.GetObservable(ListBox.ScrollProperty).OfType<ScrollViewer>().FirstAsync();
 
-            scrollViewer.GetObservable(ScrollViewer.ScrollBarMaximumProperty).Subscribe(i =>
+            var maxScrollProperty = scrollViewer.GetObservable(ScrollViewer.MaxHeightProperty).Subscribe(i =>
             {
                 if (_addingNewMessages)
-                    _listBox.Scroll.Offset = i;
+                    scrollViewer.Offset = new Vector(0, i);
             });
+
+            
         }
         private void MessageTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
