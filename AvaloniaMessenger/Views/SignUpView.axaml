@@ -47,36 +47,22 @@
         </TextBox.InnerLeftContent>
       </TextBox>
 
-      <UserControl Margin="48,0,0,0" Content="{Binding LoginErrors}"/>
+      <UserControl Margin="40,0,0,0" Content="{Binding LoginErrors}"/>
 
-      <UserControl Margin="48,0,0,0" Content="{Binding Password}"/>
-      <UserControl Margin="48,0,0,0"  Content="{Binding PasswordErrors}"/>
+      <UserControl Margin="40,0,0,0" Content="{Binding Password}"/>
+      <UserControl Margin="40,0,0,0"  Content="{Binding PasswordErrors}"/>
       
-      <UserControl Margin="48,0,0,0" Content="{Binding RepeatPassword}"/>
-      <UserControl Margin="48,0,0,0"  Content="{Binding RepeatPasswordErrors}" />
+      <UserControl Margin="40,0,0,0" Content="{Binding RepeatPassword}"/>
+      <UserControl Margin="40,0,0,0"  
+                   ZIndex="2"
+                   Content="{Binding RepeatPasswordErrors}" />
       
     
       <Button
-        ToolTip.Tip="Enter "
+        ToolTip.Tip="Enter"
         Command="{Binding SignUpCommand}">Sign up</Button>
 
-      <ListBox ItemsSource="{Binding SignUpErrors}"
-               Background="Transparent"
-               IsEnabled="False">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel>
-              <Label
-                Margin="0"
-                HorizontalAlignment="Center"
-                FontSize="12"
-                FontStyle="Italic"
-                Content="{Binding}"
-                Foreground="Red"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+      <UserControl Margin="48,0,0,0"  Content="{Binding SignInErrors}" />
       
       <Button
         Command="{Binding ReturnCommand}">Return</Button>

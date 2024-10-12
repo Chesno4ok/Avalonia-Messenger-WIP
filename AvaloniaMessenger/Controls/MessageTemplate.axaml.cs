@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using AvaloniaMessenger.Models;
 using ReactiveUI;
 using System;
 using System.Text;
@@ -11,45 +12,45 @@ namespace AvaloniaMessenger.Controls
     {
         public MessageTemplate()
         {
-            ContentProperty.WhenAnyValue(i => i).Subscribe(i =>  SetContent());
+            
         }
 
-        public void SetContent()
+        public readonly static StyledProperty<Message> MessageProperty =
+           AvaloniaProperty.Register<MessageTemplate, Message>(nameof(Message));
+        public Message Message
         {
-
+            get => GetValue(MessageProperty);
+            set => SetValue(MessageProperty, value);
         }
 
-        public static readonly StyledProperty<string> SenderProperty =
-            AvaloniaProperty.Register<MessageTemplate, string>(nameof(Sender));
-        public string Sender
+        public readonly static StyledProperty<bool> IsVisibleProperty =
+           AvaloniaProperty.Register<MessageTemplate, bool>(nameof(IsVisible));
+        public bool IsVisible
         {
-            get => GetValue(SenderProperty);
-            set => SetValue(SenderProperty, value);
+            get => GetValue(IsVisibleProperty);
+            set => SetValue(IsVisibleProperty, value);
         }
 
-        public static readonly StyledProperty<string> TextMessageProperty =
-           AvaloniaProperty.Register<MessageTemplate, string>(nameof(TextMessage));
-        public string TextMessage
+        public readonly static StyledProperty<string> DateProperty =
+           AvaloniaProperty.Register<MessageTemplate, string>(nameof(Date));
+        public string Date
         {
-            get => GetValue(TextMessageProperty);
-            set => SetValue(TextMessageProperty, value);
+            get => GetValue(DateProperty);
+            set => SetValue(DateProperty, value);
         }
 
-        public readonly static StyledProperty<byte[]> ContentProperty  =
-           AvaloniaProperty.Register<MessageTemplate, byte[]>(nameof(Content));
-        public byte[] Content
+        public override void BeginInit()
         {
-            get => GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
+            this.WhenAnyValue(i => i.Message).Subscribe(i =>
+            {
+                if (i == null)
+                    return;
 
-        }
+                IsVisible = i.User != null;
+                Date = Message.Date.ToString("D");
+            });
 
-        public static readonly StyledProperty<string> TimeProperty =
-          AvaloniaProperty.Register<MessageTemplate, string>(nameof(Time));
-        public string Time
-        {
-            get => GetValue(TimeProperty);
-            set => SetValue(TimeProperty, value);
+            base.BeginInit();
         }
     }
 }

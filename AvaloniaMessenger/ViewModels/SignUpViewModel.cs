@@ -84,7 +84,6 @@ namespace AvaloniaMessenger.ViewModels
         // Commands
         public ReactiveCommand<Unit, Unit> SignUpCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> ReturnCommand { get; set; }
-        public ReactiveCommand<Unit, Unit> TogglePasswordChar { get; private set; }
         // Timers
         private DispatcherTimer _checkLoginTimer = new() {Interval = TimeSpan.FromMilliseconds(500) };
         private DispatcherTimer _checkPasswordTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
@@ -144,9 +143,9 @@ namespace AvaloniaMessenger.ViewModels
             string repeatPassword = _repeatPasswordViewModel.Password;
 
             if (password != repeatPassword)
-                _repeatErrorsViewModel.AddError("Passwords must be the same");
+                _repeatErrorsViewModel.AddError("Passwords not the same");
             else
-                _repeatErrorsViewModel.RemoveError("Passwords must be the same");
+                _repeatErrorsViewModel.RemoveError("Passwords not the same");
         }
 
         private void CheckPasswordTick(object? sender, EventArgs e)
@@ -176,8 +175,9 @@ namespace AvaloniaMessenger.ViewModels
 
         private void CheckLoginTick(object? sender, EventArgs e)
         {
-            //Task.Run(() => CheckLogin(Login));
-            CheckLogin(Login);
+            Task.Run(() => CheckLogin(Login));
+            _checkLoginTimer.IsEnabled = false;
+            //CheckLogin(Login);
         }
 
         public void SignUp()
@@ -189,7 +189,6 @@ namespace AvaloniaMessenger.ViewModels
                 Name = this.Username
             };
 
-            _signInErrorsViewModel.RemoveError("Failed to sign up");
             try
             {
                 _messengerController.SignUp(user.Name, user.Login, user.Password);
@@ -212,11 +211,12 @@ namespace AvaloniaMessenger.ViewModels
             else
                 _loginErrorsViewModel.RemoveError("Login already exists");    
 
-            if (Login.Length < 4 )
+            if (Login.Length < 5 )
                 _loginErrorsViewModel.AddError("Login is too short");
-            else if(Login.Length > 3)
+            else
                 _loginErrorsViewModel.RemoveError("Login is too short");
 
+            await Task.CompletedTask;
         }
     }
 

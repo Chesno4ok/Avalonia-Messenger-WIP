@@ -63,14 +63,20 @@ namespace AvaloniaMessenger.ViewModels
         {
             if(_errorList.FirstOrDefault(i => i.Text == error) == null)
             {
-                ErrorSourceList.Add(new Error(error));
+                Dispatcher.UIThread.Post(() =>
+                {
+                    ErrorSourceList.Add(new Error(error));
+                });
             }
         }
         public void RemoveError(string error)
         {
             if (_errorList.FirstOrDefault(i => i.Text == error) != null)
             {
-                ErrorSourceList.Remove(_errorList.FirstOrDefault(i => i.Text == error));
+                Dispatcher.UIThread.Post(() =>
+                {
+                    ErrorSourceList.Remove(_errorList.FirstOrDefault(i => i.Text == error));
+                });
             }
         }
     }

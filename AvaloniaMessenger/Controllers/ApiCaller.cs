@@ -95,6 +95,8 @@ namespace AvaloniaMessenger.Controllers
             {
 
                 client.DefaultRequestHeaders.Add("Authorization", Token);
+                content.Headers.Remove("Content-Type");
+                content.Headers.Add("Content-Type", "application/json");
                 try
                 {
                     response = client.PostAsync(requestUri, content).Result;

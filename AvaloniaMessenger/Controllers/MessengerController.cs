@@ -77,16 +77,23 @@ namespace AvaloniaMessenger.Controllers
         [QueryInfo("name", "login", "password")]
         public void SignUp(string name, string login, string password)
         {
-            var query = queryBuilder.GetQueryString(name, login, password);
+            //var query = queryBuilder.GetQueryString(name, login, password);
 
-            apiCaller.PostRequest("User/register_user?", query, new StringContent(""));
+            var user = new User
+            {
+                Name = name,
+                Login = login,
+                Password = password
+            };
+            string userJson = JsonConvert.SerializeObject(user);
+
+            apiCaller.PostRequest("User/register_user?", "", new StringContent(userJson));
 
         }
 
         [QueryInfo("login")]
         public bool CheckLogin(string login)
         {
-            User user = new User() { Login = login };
             var query = queryBuilder.GetQueryString(login);
 
             try

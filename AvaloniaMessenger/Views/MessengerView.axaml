@@ -69,10 +69,7 @@
           <DataTemplate>
             <StackPanel>
                 <controls:MessageTemplate
-                VerticalAlignment="Stretch"
-                TextMessage="{Binding Text}"
-                Sender="{Binding Sender}"
-                Time="{Binding Time}"/>
+                  Message="{Binding}"/>
             </StackPanel>
           </DataTemplate>
         </ListBox.ItemTemplate>

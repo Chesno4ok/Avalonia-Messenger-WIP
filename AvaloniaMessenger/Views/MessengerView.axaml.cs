@@ -1,8 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Threading;
+using AvaloniaMessenger.Controls;
+using AvaloniaMessenger.Models;
 using AvaloniaMessenger.ViewModels;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
@@ -113,6 +116,20 @@ namespace AvaloniaMessenger.Views
                 return;
 
             (DataContext as MessengerViewModel).SendMessage();
+        }
+        public void SetDates()
+        {
+            Message prevMessage = new();
+
+            MessagePanel.GetTemplateChildren();
+
+            foreach(var msg in MessagePanel.Items)
+            {
+                
+
+                if(msg is MessageDateTemplate)
+                    continue;
+            }
         }
 
     }

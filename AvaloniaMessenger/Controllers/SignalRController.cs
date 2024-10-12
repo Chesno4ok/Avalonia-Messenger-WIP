@@ -26,17 +26,23 @@ namespace AvaloniaMessenger.Controllers
         public ReactiveCommand<Chat, Unit> LoadNewChatCommand;
         public ReactiveCommand<Chat, Unit> DeleteChatCommand;
         public ReactiveCommand<Unit, Unit> ConnectionFailedCommand;
+        
+        private string _connectionString { get; set; }
+        private string _token { get; set; }
+        private User _user { get; set; }
+
 
         HubConnection connection;
 
-        private string connectionString;
-        public  SignalRController(string connectionString, string token)
+        public  SignalRController(string connectionString, string token, User user)
         {
-            this.connectionString = connectionString;
+            _connectionString = connectionString;
+            _user = user;
+            _token = token;
 
-            connection = new HubConnectionBuilder().WithUrl(connectionString, options =>
+            connection = new HubConnectionBuilder().WithUrl(_connectionString, options =>
             {
-                options.AccessTokenProvider = () => Task.FromResult(token);
+                options.AccessTokenProvider = () => Task.FromResult(_token);
             }).Build();
             connection.Closed += Connection_Closed;
 
@@ -52,7 +58,9 @@ namespace AvaloniaMessenger.Controllers
         }
         public void UserLeft(ChatUser chatUser)
         {
-            DeleteChatCommand.Execute(new Chat { Id = chatUser.ChatId }).Subscribe();
+            if (chatUser.UserId == _user.Id)
+                DeleteChatCommand.Execute(new Chat { Id = chatUser.ChatId }).Subscribe();
+            
         }
         public void ReceiveMessage(Message message)
         {
@@ -65,6 +73,20 @@ namespace AvaloniaMessenger.Controllers
         private async Task Connection_Closed(Exception? arg)
         {
             ConnectionFailedCommand.Execute().Subscribe();
+
+            while (true)
+            {
+                try
+                {
+                    await connection.StartAsync();
+                    ConnectionFailedCommand.Execute().Subscribe();
+                    break;
+                }
+                catch
+                {
+                    Thread.Sleep(1000);
+                }
+            }
 
             await Task.CompletedTask;
         }

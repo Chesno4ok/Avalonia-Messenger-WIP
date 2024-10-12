@@ -11,32 +11,39 @@
     <Setter Property="Template">
       <ControlTemplate>
         
-        <Grid
+        <Grid 
           Background="WhiteSmoke"
           VerticalAlignment="Stretch">
           <Border
-            Background="White"
+            IsVisible="{Binding IsVisible, RelativeSource={RelativeSource TemplatedParent}}" Background="White"
             CornerRadius="20"
             Padding="5">
             <StackPanel>
               <TextBlock
                          Padding="0"
-                         Text="{TemplateBinding Sender}"
+                         Text="{Binding Message.Sender, RelativeSource={RelativeSource TemplatedParent}}"
                          TextWrapping="Wrap"
                          FontWeight="DemiBold"
                          Foreground="BlueViolet"/>
               <TextBlock
                 Padding="0"
-                Text="{TemplateBinding TextMessage}"
+                Text="{Binding Message.Text, RelativeSource={RelativeSource TemplatedParent}}"
                          TextWrapping="Wrap"/>
               <TextBlock
                 Padding="0"
-                Text="{TemplateBinding Time}"
+                Text="{Binding Message.Time, RelativeSource={RelativeSource TemplatedParent}}"
                          HorizontalAlignment="Left"
                          Foreground="Gray"/>
             </StackPanel>
           </Border>
+          
+          <TextBlock Text="{Binding Date, RelativeSource={RelativeSource TemplatedParent}}" 
+                     ZIndex="-1"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+          
         </Grid>
+        
         
       </ControlTemplate>
     </Setter>

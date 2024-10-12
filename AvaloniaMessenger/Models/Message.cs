@@ -18,8 +18,11 @@ public partial class Message
     public short IsRead { get; set; }
 
     public string? Text { get; set; }
-    public string Time { get => Date.ToLocalTime().ToString("HH:mm"); }
-    public string Sender { get; set; }
-    public virtual User User { get; set; } = null!;
+    public string Time { get => Date.ToLocalTime().ToString("H:mm"); }
+    public string Sender 
+    {
+        get => User == null ? " " : User.Name;
+    }
+    public UserResponse? User { get; set; } = null!;
 
 }

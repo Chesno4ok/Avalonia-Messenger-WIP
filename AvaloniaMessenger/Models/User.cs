@@ -16,3 +16,8 @@ public class User
 
     public string Token { get; set; } = "";
 }
+public class UserResponse
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+}
