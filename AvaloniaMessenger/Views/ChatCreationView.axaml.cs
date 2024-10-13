@@ -11,12 +11,20 @@ public partial class ChatCreationView : UserControl
     public ChatCreationView()
     {
         InitializeComponent();
-        Grid grid = new();
+    }
+
+    private void Grid_Tapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        var vm = DataContext as ChatCreationViewModel;
+        vm.CloseViewCommand.Execute().Subscribe();
     }
 
     private void Grid_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
-        var vm = DataContext as ChatCreationViewModel;
-        vm.CloseViewCommand.Execute().Subscribe();
+        
+    }
+
+    private void Grid_PointerPressed2(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
     }
 }

@@ -60,7 +60,6 @@ namespace AvaloniaMessenger.Controllers
         {
             if (chatUser.UserId == _user.Id)
                 DeleteChatCommand.Execute(new Chat { Id = chatUser.ChatId }).Subscribe();
-            
         }
         public void ReceiveMessage(Message message)
         {

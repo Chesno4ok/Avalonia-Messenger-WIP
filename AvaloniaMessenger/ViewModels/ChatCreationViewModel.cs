@@ -85,8 +85,8 @@ namespace AvaloniaMessenger.ViewModels
             var canCreateChat = this.WhenAnyValue(cn => cn.ChatName, cn => !String.IsNullOrEmpty(cn));
             CreateNewChatCommand = ReactiveCommand.Create(CreateNewChat, canCreateChat);
 
-            this.WhenAnyValue(i => i.AddedUsersList, j => j.RemovedUserListItem).Subscribe(i => SearchUser(SearchField));
-            this.WhenAnyValue(i => i.SearchField).Subscribe(i => SearchUser(i));
+            this.WhenAnyValue(i => i.AddedUsersList, j => j.RemovedUserListItem).Subscribe(i => Task.Run(() => SearchUser(SearchField)));
+            this.WhenAnyValue(i => i.SearchField).Subscribe(i => Task.Run(() => SearchUser(i)));
             this.WhenAnyValue(i => i.ChosenUserListItem).Subscribe(i => AddNewUser(i));
             this.WhenAnyValue(i => i.RemovedUserListItem).Subscribe(i => RemoveUser(i));
         }
@@ -132,21 +132,29 @@ namespace AvaloniaMessenger.ViewModels
             {
                 SearchUsersList.Remove(user);
             });
-
-
         }
-        private void SearchUser(string username)
+        private async Task SearchUser(string username)
         {
-            SearchUsersList.Clear();
-
             if (String.IsNullOrEmpty(username))
+            {
+                SearchUsersList.Clear();
                 return;
+            }
 
             var users = new List<User>(Messenger.SearchUser(username));
 
-            users.RemoveMany(users.Where(i => AddedUsersList.Any(u => u.Id == i.Id) || i.Id == CurrentUser.Id));
-            
-            SearchUsersList.AddRange(users);
+            var newUsers = users.Where(u => 
+            SearchUsersList.FirstOrDefault(i => u.Id == i.Id) == null 
+            && AddedUsersList.FirstOrDefault(i => u.Id == i.Id) == null
+            && u.Id != CurrentUser.Id);
+
+            if (newUsers.Count() > 0)
+                SearchUsersList = new AvaloniaList<User>(newUsers);
+            else if (users.Count() == 0)
+                SearchUsersList.Clear();
+
+
+            await Task.CompletedTask;
         }
 
         private void CreateChat()

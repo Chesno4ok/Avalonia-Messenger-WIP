@@ -242,13 +242,7 @@ namespace AvaloniaMessenger.ViewModels
 
             var lastMessage = Messages.Count() == 0 ? new Message() : Messages.Last();
 
-            if (lastMessage.Date.Date != message.Date.Date)
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    Messages.Add(new Message { Date = message.Date, User = null });
-                });
-            }
+            
 
             Message oldMessage;
             while (true)
@@ -264,16 +258,23 @@ namespace AvaloniaMessenger.ViewModels
                 }
             }
 
+            if (lastMessage.Date.Date != message.Date.Date)
+            {
+                Messages.Add(new Message { Date = message.Date, User = null });
+            }
+
             if (oldMessage != null)
                 oldMessage = message;
             else if(message.ChatId == SelectedChat.Id)
                 Messages.Add(message);
 
+            
+
             LoadNewMessagesScrollCommand.Execute().Subscribe();
         }
         private async Task OnConnectionFailed()
         {
-            if(PopUpWindow == null)
+            if(!(PopUpWindow is ReconnectingView))
             {
                 Dispatcher.UIThread.Post(() =>
                 {
