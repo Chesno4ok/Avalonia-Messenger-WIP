@@ -20,15 +20,9 @@
 
 ## Скриншоты
 
+![image](https://github.com/user-attachments/assets/55b7c105-30ca-4803-ba50-76866e7348b8)
 ![image](https://github.com/user-attachments/assets/2211191b-61d9-4d3f-8679-a19e426e7b8c)
 ![image](https://github.com/user-attachments/assets/559e3dc9-e5ab-4b7c-987c-9241c8354632)
 ![image](https://github.com/user-attachments/assets/46830847-2067-46a7-9614-2cf19a89539b)
 
 
-
-William1!
-Anderson1!
-
-## Контакты
-
-Если у вас есть вопросы или предложения, свяжитесь со мной по email: [your-email@example.com](mailto:your-email@example.com)
