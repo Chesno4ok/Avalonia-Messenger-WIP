@@ -1,4 +1,4 @@
-[English version](https://github.com/Chesno4ok/Avalonia-Messenger-WIP/blob/master/README.md)
+[English version](https://github.com/Chesno4ok/Avalonia-Messenger-WIP/blob/master/README_EN.md)
 
 # Мессенджер на Avalonia
 
