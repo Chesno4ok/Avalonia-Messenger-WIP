@@ -1,3 +1,5 @@
+[English version](https://github.com/Chesno4ok/Avalonia-Messenger-WIP/blob/master/README.md)
+
 # Мессенджер на Avalonia
 
 Это приложение — кроссплатформенный мессенджер, созданный с использованием [Avalonia UI](https://avaloniaui.net/) и библиотеки [SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr). Мессенджер поддерживает работу в реальном времени, позволяя пользователям обмениваться сообщениями и создавать чаты.
