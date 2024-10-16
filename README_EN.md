@@ -20,6 +20,10 @@ This application is a cross-platform messenger created using [Avalonia UI](https
 - **Avalonia** — a cross-platform framework for building user interfaces, supporting Windows, macOS, and Linux.
 - **SignalR** — a library for real-time processing, used to synchronize messages between the client and server.
 
+## Set Up
+1. Get API [here](https://github.com/Chesno4ok/MessengerAPI-WIP)
+2. In settings.json write an http link to the API
+
 ## Screenshots
 
 ![image](https://github.com/user-attachments/assets/55b7c105-30ca-4803-ba50-76866e7348b8)
