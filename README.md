@@ -22,6 +22,10 @@
 
 ## Скриншоты
 
+## Установка
+1. Установите API [здесь](https://github.com/Chesno4ok/MessengerAPI-WIP)
+2. В файле settings.json укажите http ссылку на API
+
 ![image](https://github.com/user-attachments/assets/55b7c105-30ca-4803-ba50-76866e7348b8)
 ![image](https://github.com/user-attachments/assets/2211191b-61d9-4d3f-8679-a19e426e7b8c)
 ![image](https://github.com/user-attachments/assets/559e3dc9-e5ab-4b7c-987c-9241c8354632)
