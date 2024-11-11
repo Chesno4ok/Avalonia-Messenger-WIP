@@ -12,21 +12,21 @@ using System.Xml.Linq;
 using AvaloniaMessenger.Models;
 using Newtonsoft.Json;
 
+
 namespace AvaloniaMessenger.Controllers
 {
     class MessengerController
     {
-
         public ApiCaller apiCaller { get; set; }
         private QueryStringBuilder queryBuilder { get; set; }
-
-        
+        private static MessengerController instance;
 
         public MessengerController(Uri serverInfo)
         {
             apiCaller = new ApiCaller(serverInfo);
             queryBuilder = new QueryStringBuilder();
         }
+
 
         #region MessageController
         [QueryInfo("userId","chatId", "amount")]
@@ -62,6 +62,22 @@ namespace AvaloniaMessenger.Controllers
         #endregion
 
         #region UserController
+        public User? GetMe()
+        {
+
+            var response = apiCaller.GetRequest<User>("User/get_me?");
+
+            return response;
+        }
+
+        public User? EditUser(User user)
+        {
+            var response = apiCaller.PutRequest<User>("User/edit_user", new StringContent(JsonConvert.SerializeObject(user)));
+
+            return response;
+        }
+
+
         [QueryInfo("login", "password")]
         public User? SignIn(string login, string password)
         {

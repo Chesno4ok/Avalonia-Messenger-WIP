@@ -20,14 +20,15 @@
   <DockPanel
     HorizontalAlignment="Center"
     VerticalAlignment="Center">
-    <StackPanel>
+    <StackPanel
+      Spacing="3">
       <Label 
         HorizontalAlignment="Center" 
-        FontSize="24">Garlic Messenger</Label>
+        FontSize="24">Welcome Back!</Label>
       
       <TextBox 
         Watermark="Login" 
-        MinWidth="150"
+        Width="150"
         Text="{Binding Login}">
         <TextBox.InnerLeftContent>
           <Image Height="25" 
@@ -37,8 +38,15 @@
 
       <UserControl Margin="40,0,0,0" 
                    Content="{Binding PasswordInput}"></UserControl>
+
+      <CheckBox VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                  Content="Remember password"
+                  IsChecked="{Binding RememberPassword}"/>
       
       <UserControl Margin="40,0,0,0" Content="{Binding ErrorList}"/>
+
+      
       
       <Button 
         Command="{Binding SignInCommand}">Sign In</Button>

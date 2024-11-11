@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
+             x:DataType="vm:UserProfileViewModel"
+             x:Class="AvaloniaMessenger.UserProfileView">
+  <Grid>
+    <Grid Background="rgba(0, 0, 0, 0.47)" 
+          ZIndex="0"
+          PointerPressed="Grid_PointerPressed"> 
+      
+    </Grid>
+    <Border BorderThickness="2"
+            Background="White"
+            Width="400" Height="200"
+            CornerRadius="20"
+            Padding="10">
+      <Grid ZIndex="1"
+            Background="White">
+
+        <StackPanel>
+          <TextBlock Text="Profile" FontSize="20"/>
+          <TextBox Watermark="Username"
+                 Text="{Binding UserName}"
+                 MinHeight="35"
+                 VerticalAlignment="Top"/>
+          <TextBlock Name="ErrorText" Foreground="Red"/>
+        </StackPanel>
+        
+        <DockPanel VerticalAlignment="Bottom">
+          <Button Content="Save" Command="{Binding SaveUser}"/>
+          <Button Content="Exit" Command="{Binding ExitUserProfile}"/>
+        </DockPanel>
+      </Grid>
+    </Border>
+    
+  </Grid>
+</UserControl>

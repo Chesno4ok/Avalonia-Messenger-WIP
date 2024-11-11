@@ -39,6 +39,14 @@ namespace AvaloniaMessenger.ViewModels
                 this.RaiseAndSetIfChanged(ref _login, value);
             }
         }
+
+        private bool _rememberPassword;
+        public bool RememberPassword
+        {
+            get => _rememberPassword;
+            set => this.RaiseAndSetIfChanged(ref _rememberPassword, value);
+        }
+
         // UserControls
         private PasswordInput _passwordInput = new PasswordInput();
         public PasswordInput PasswordInput { get => _passwordInput; set { this.RaiseAndSetIfChanged(ref _passwordInput, value); } }
@@ -86,16 +94,22 @@ namespace AvaloniaMessenger.ViewModels
         }
         public async Task SetMessenger()
         {
-            User user = new User { Login = Login, Password = _passwordInputViewModel.Password };
-            User? userToken = null;
-            
+            User? userToken = new();
+
             try
             {
-                userToken = Messenger.SignIn(user.Login, user.Password);
+                userToken = Messenger.SignIn(Login, _passwordInputViewModel.Password);
             }
             catch
             {
                 throw new NoConnectionException("Couldn't connect to server");
+            }
+
+            if (RememberPassword)
+            {
+                var settings = Settings.GetInstance();
+                settings.ApiKey = userToken.Token;
+                settings.SaveSettings();
             }
 
             if (userToken != null)

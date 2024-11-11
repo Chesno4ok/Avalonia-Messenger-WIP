@@ -93,6 +93,8 @@ namespace AvaloniaMessenger.ViewModels
         public ReactiveCommand<Unit, Unit> ExitMessengerCommand { get; set; }
         public ReactiveCommand<Unit, Unit> OpenChatCreationCommand { get; set; }
         public ReactiveCommand<Unit, Unit> OpenChatSettingsCommand { get; set; }
+        public ReactiveCommand<Unit, Unit> OpenProfileCommand { get; set; }
+
         // Additional properties
         public MessengerView MessengerView;
         public SignalRController SignalRController;
@@ -108,7 +110,7 @@ namespace AvaloniaMessenger.ViewModels
             SelectedChat = null;
 
             // SignalR
-            SignalRController = new("https://localhost:7284/chat", user.Token, user);
+            SignalRController = new(Settings.GetInstance().ConnectionString, user.Token, user);
             SignalRController.LoadNewMessagesCommand = ReactiveCommand.Create<Message>(m => OnNewMessage(m));
             SignalRController.LoadNewChatCommand = ReactiveCommand.Create<Chat>(ch => OnNewChat(ch));
             SignalRController.ConnectionFailedCommand = ReactiveCommand.CreateFromTask(OnConnectionFailed);
@@ -126,7 +128,11 @@ namespace AvaloniaMessenger.ViewModels
 
             // Side bar
 
+            OpenProfileCommand = ReactiveCommand.Create(OpenProfile);
+            SideBarButtons.Add(new SideBarButton() { CommandName = "Profile", ReactiveCommand = OpenProfileCommand });
+
             OpenChatCreationCommand = ReactiveCommand.Create(OpenChatCreation);
+            
             SideBarButtons.Add(new SideBarButton { CommandName = "Create new chat", ReactiveCommand = OpenChatCreationCommand });
 
             OpenSettingsCommand = ReactiveCommand.CreateFromTask(OpenSettings);
@@ -135,6 +141,30 @@ namespace AvaloniaMessenger.ViewModels
             SideBarButtons.Add(new SideBarButton { CommandName = "Exit", ReactiveCommand = exitCommand });
 
             SetChats();
+        }
+        private void OpenProfile()
+        {
+            ToggleSideBarCommand.Execute().Subscribe();
+
+            var vm = new UserProfileViewModel(user, messenger)
+            {
+                ExitUserProfile = ReactiveCommand.Create<User, Unit>(newUser =>
+                {
+                    PopUpWindow = null;
+
+                    if (newUser is null)
+                        return Unit.Default;
+
+                    user = newUser;
+
+                    return Unit.Default;
+                })
+            };
+            PopUpWindow = new UserProfileView()
+            {
+                DataContext = vm
+            };
+
         }
         private void OpenChatSettings()
         {
@@ -226,6 +256,8 @@ namespace AvaloniaMessenger.ViewModels
 
             MessageText = "";
             await SignalRController.SendMessage(message);
+
+
         }
         private void OnNewChat(Chat chat)
         {
@@ -233,16 +265,10 @@ namespace AvaloniaMessenger.ViewModels
         }
         private void OnNewMessage(Message message)
         {
-            //message.Sender = _userList.FirstOrDefault(i => i.Id == message.UserId).Name;
-
-
             if (SelectedChat == null)
                 return;
 
-
             var lastMessage = Messages.Count() == 0 ? new Message() : Messages.Last();
-
-            
 
             Message oldMessage;
             while (true)
@@ -267,8 +293,6 @@ namespace AvaloniaMessenger.ViewModels
                 oldMessage = message;
             else if(message.ChatId == SelectedChat.Id)
                 Messages.Add(message);
-
-            
 
             LoadNewMessagesScrollCommand.Execute().Subscribe();
         }

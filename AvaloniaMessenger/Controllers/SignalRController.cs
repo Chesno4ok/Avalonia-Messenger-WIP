@@ -36,7 +36,7 @@ namespace AvaloniaMessenger.Controllers
 
         public  SignalRController(string connectionString, string token, User user)
         {
-            _connectionString = connectionString;
+            _connectionString = connectionString + "/chat";
             _user = user;
             _token = token;
 

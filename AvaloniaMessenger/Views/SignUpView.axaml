@@ -9,7 +9,7 @@
              x:DataType="vm:SignUpViewModel">
   <UserControl.Styles>
     <Style Selector="TextBox">
-      <Setter Property="MinWidth" Value="150" />
+      <Setter Property="Width" Value="150" />
       <Setter Property="Margin" Value="2"/>
       <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>

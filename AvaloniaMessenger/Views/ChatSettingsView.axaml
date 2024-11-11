@@ -3,28 +3,34 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
+             Width="1920"
+             Height="1080"
              Background="rgba(0, 0, 0, 0.47)"
+             x:DataType="vm:ChatSettingsViewModel"
              x:Class="AvaloniaMessenger.Views.ChatSettingsView">
-  <Grid
+  <Grid>
+    <Grid
     Background="Transparent"
     PointerPressed="Grid_PointerPressed"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
+    </Grid>
     <Border
-      Height="550"
-      Width="400"
-      Background="White"
-      CornerRadius="20"
-      Padding="10"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="White"
+        CornerRadius="20"
+        Padding="10"
       >
       <StackPanel
-      Height="500"
+        Spacing="10"
       Width="400"
       Background="White"
       VerticalAlignment="Center"
       HorizontalAlignment="Center">
         <TextBlock
-          Text="Chat Name"
+          Text="{Binding CurrentChat.ChatName}"
           FontSize="30"/>
         <TextBlock
           Text="Participants"
@@ -47,5 +53,6 @@
       </StackPanel>
 
     </Border>
+
   </Grid>
 </UserControl>

@@ -31,11 +31,33 @@ class MainViewModel : ViewModelBase
 
     MessengerController Messenger { get; set; }
 
+    // 
     public MainViewModel()
     {
+        var settings = Settings.GetInstance();
 
-        Messenger = new MessengerController(new Uri("https://localhost:7284"));
-        SetSignIn();
+        Messenger = new MessengerController(new Uri(Settings.GetInstance().ConnectionString));
+
+        if(settings.ApiKey == null)
+        {
+            SetSignIn();
+            return;
+        }
+
+        User? user = new User();
+        Messenger.apiCaller.Token = "Bearer " + settings.ApiKey;
+        user = Messenger.GetMe();
+
+        if (user is null)
+        {
+            SetSignIn();
+            return;
+        }
+
+        user.Token = settings.ApiKey;
+        SetMessenger(user);
+
+        
     }   
     public void SetMessenger(User user)
     {

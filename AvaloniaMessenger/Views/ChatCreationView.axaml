@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
-             
+             Width="1920"
+             Height="1080"
              x:Class="AvaloniaMessenger.Views.ChatCreationView"
              x:DataType="vm:ChatCreationViewModel"
              ZIndex="1"
@@ -18,21 +19,20 @@
           VerticalAlignment="Stretch">
       
     </Grid>
-    <Grid
-        HorizontalAlignment="Stretch"
-        ZIndex="1">
       <Border
-      ZIndex="3"
-      Width="260"
-      Background="White"
-      CornerRadius="20"
-      Padding="15">
+        BorderThickness="2"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Background="White"
+        CornerRadius="20"
+        Padding="10">
         <StackPanel
-          PointerPressed="Grid_PointerPressed2"
-          Background="White"
-          Width="250"
-          HorizontalAlignment="Center"
+          Width="300"
+          HorizontalAlignment="Stretch"
           VerticalAlignment="Center"
+          Name="MainPanel"
+          PointerPressed="Grid_PointerPressed2"
+          
           ZIndex="3">
           <TextBlock Text="Enter chat name"/>
           <TextBox Watermark="Chat Name"
@@ -85,7 +85,6 @@
     </Grid>
 
 
-  </Grid>
   
 
 </UserControl>

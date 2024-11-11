@@ -22,12 +22,53 @@ namespace AvaloniaMessenger.Controllers
             ServerUrl = serverUrl;
         }
         #region Requests
+
+        public T? PutRequest<T>(string method, HttpContent content)
+        {
+            var response = Put(ServerUrl.AbsoluteUri + method, content);
+            return DeserializeResponse<T>(response);
+        }
+        public T? GetRequest<T>(string method)
+        {
+            var response = Get(ServerUrl.AbsoluteUri + method);
+            return DeserializeResponse<T>(response);
+        }
         public T? GetRequest<T>(string method, string query)
         {
             string requestUri = BuildQuery(method, query);
             var response = Get(requestUri);
             return DeserializeResponse<T>(response);
         }
+
+        public HttpResponseMessage GetRequest(string method)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", Token);
+
+            string requestUri = ServerUrl.ToString() + method;
+
+            HttpResponseMessage response = new HttpResponseMessage();
+            try
+            {
+                response = client.GetAsync(requestUri).Result;
+            }
+            catch
+            {
+                throw new NoConnectionException("Couldn't reach server");
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException("Bad Request", null, response.StatusCode);
+            }
+            if (response.Content.ToString() == null)
+            {
+                throw new Exception("Got null response");
+            }
+
+            return response;
+        }
+
 
         public HttpResponseMessage GetRequest(string method, string query)
         {
@@ -114,9 +155,13 @@ namespace AvaloniaMessenger.Controllers
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", Token);
+
+                content.Headers.Remove("Content-Type");
+                content.Headers.Add("Content-Type", "application/json");
                 try
                 {
                     response = client.PutAsync(requestUri, content).Result;
+                    string ass = response.Content.ReadAsStringAsync().Result;
                 }
                 catch
                 {

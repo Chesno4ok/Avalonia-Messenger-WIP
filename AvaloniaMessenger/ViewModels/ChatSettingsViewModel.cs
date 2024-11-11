@@ -37,12 +37,16 @@ namespace AvaloniaMessenger.ViewModels
             this.signalRController = signalRController;
             this.messenger = messenger;
             this.currentUser = currentUser;
-            this.CurrentChat = currentChat;
+            this._currentChat = currentChat;
 
-            var chatUsers = messenger.GetChatUsers(currentUser.Id, CurrentChat.Id);
-            Users.AddRange(chatUsers);
+            Task.Run(() => SetUsers());
 
             LeaveChatCommand = ReactiveCommand.Create(() => LeaveChat());
+        }
+        private async Task SetUsers()
+        {
+            var chatUsers = messenger.GetChatUsers(currentUser.Id, CurrentChat.Id);
+            Users.AddRange(chatUsers);
         }
         private void LeaveChat()
         {
