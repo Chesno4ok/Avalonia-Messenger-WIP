@@ -90,6 +90,15 @@ namespace AvaloniaMessenger.ViewModels
         private DispatcherTimer _checkRepeatPasswordTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
         // Messenger Controller
         private MessengerController _messengerController { get; set; }
+
+        private bool canRegister => !String.IsNullOrEmpty(Login)
+                && !String.IsNullOrEmpty(_passwordViewModel.Password)
+                && !String.IsNullOrEmpty(_repeatPasswordViewModel.Password)
+                && !String.IsNullOrEmpty(Username)
+                && _passwordErrorsViewModel.ErrorSourceList.Count == 0
+                && _loginErrorsViewModel.ErrorSourceList.Count == 0
+                && _repeatErrorsViewModel.ErrorSourceList.Count == 0;
+
         public SignUpViewModel(MessengerController messengerController)
         {
             // Password Inputs
@@ -105,18 +114,7 @@ namespace AvaloniaMessenger.ViewModels
             // Messenger Controller
             _messengerController = messengerController;
 
-            // Commands
-            var isValidObservable = this.WhenAnyValue(
-                l => l.Login, p => p._passwordViewModel.Password, rp => rp._repeatPasswordViewModel.Password, u => u.Username,
-
-                (l, p, rp, u) => !String.IsNullOrEmpty(l) 
-                && !String.IsNullOrEmpty(p) 
-                && !String.IsNullOrEmpty(rp) 
-                && !String.IsNullOrEmpty(u) 
-                && _passwordErrorsViewModel.ErrorList.Count() == 0
-                && _loginErrorsViewModel.ErrorList.Count() == 0
-                && _repeatErrorsViewModel.ErrorList.Count == 0);
-            SignUpCommand = ReactiveCommand.Create(() => SignUp(), isValidObservable);
+            SignUpCommand = ReactiveCommand.Create(() => SignUp());
 
             this.WhenAnyValue(i => i.Login).Subscribe(i => _checkLoginTimer.IsEnabled = true);
             this.WhenAnyValue(i => i._passwordViewModel.Password).Subscribe(i => TogglePasswordCheck());
@@ -182,6 +180,9 @@ namespace AvaloniaMessenger.ViewModels
 
         public void SignUp()
         {
+            if (!canRegister)
+                return;
+
             var user = new User()
             {
                 Login = this.Login,

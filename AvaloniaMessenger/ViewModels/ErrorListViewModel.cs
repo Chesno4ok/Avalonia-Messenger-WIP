@@ -57,6 +57,7 @@ namespace AvaloniaMessenger.ViewModels
             error.ErrorPopup.HideAnimation();
 
             DeleteQueue.Add(error);
+            ErrorList.Remove(error);
             deleteTimer.IsEnabled = true;
         }
         public void AddError(string error)
