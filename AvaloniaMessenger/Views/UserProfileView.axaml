@@ -30,8 +30,8 @@
         </StackPanel>
         
         <DockPanel VerticalAlignment="Bottom">
-          <Button Content="Save" Command="{Binding SaveUser}"/>
-          <Button Content="Exit" Command="{Binding ExitUserProfile}"/>
+          <Button Content="Save" Height="45" Command="{Binding SaveUser}"/>
+          <Button Content="Exit" Height="45" Command="{Binding ExitUserProfile}"/>
         </DockPanel>
       </Grid>
     </Border>

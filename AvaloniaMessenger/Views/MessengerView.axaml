@@ -6,7 +6,6 @@
              x:Class="AvaloniaMessenger.Views.MessengerView"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
-             Background="WhiteSmoke"
              xmlns:controls="clr-namespace:AvaloniaMessenger.Controls"
              
              x:DataType="vm:MessengerViewModel">
@@ -15,8 +14,8 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
   </UserControl.Styles>
-  <Grid ColumnDefinitions="*,1.5*" RowDefinitions="35,10*,35">
-    <Grid Name="ChatPanel" Grid.Row="1" Grid.RowSpan="2" Background="AntiqueWhite">
+  <Grid ColumnDefinitions="*,1.5*" RowDefinitions="50,10*,60">
+    <Grid Name="ChatPanel" Grid.Row="1" Grid.RowSpan="2" >
       <ListBox ItemsSource="{Binding ChatList}" 
                SelectedItem="{Binding SelectedChat}">
         <ListBox.ItemTemplate>
@@ -52,7 +51,6 @@
       />
     
       <ListBox
-               Background="WhiteSmoke"
                Name="MessagePanel"
                Grid.Row="1" Grid.Column="1"
                VerticalAlignment="Stretch"
@@ -75,42 +73,69 @@
         </ListBox.ItemTemplate>
       </ListBox>
 
-    <DockPanel Name="ToolPanel" Background="White">
-      <Button Content="|||" Command="{Binding ElementName=SideBarMenu, Path=ToggleSideBarCommand}"/>
+    <DockPanel Name="ToolPanel" Height="60" >
+      <Button Content="|||"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Left"
+              Width="45"
+              Height="45"
+              Command="{Binding ElementName=SideBarMenu, Path=ToggleSideBarCommand}"/>
+      <DockPanel.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+          <GradientStop Color="Transparent" Offset="0.0"/>
+          <GradientStop Color="{DynamicResource MaterialDesignSilverGray}" Offset="1.0"/>
+        </LinearGradientBrush>
+      </DockPanel.Background>
     </DockPanel>
-    <DockPanel Name="ChatHeaderPanel" Grid.Column="1" Background="White">
+    
+    <DockPanel Name="ChatHeaderPanel" 
+               Grid.Column="1" 
+               HorizontalAlignment="Stretch" Height="60">
     <Button Content="{Binding SelectedChat.ChatName}" 
+            Height="45"
+            Width="{Binding ElementName=ChatHeaderPanel, Path=Width}"
             Command="{Binding OpenChatSettingsCommand}" 
-            Background="Transparent"
             FontSize="20"/>
+      <DockPanel.Background>
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+          <GradientStop Color="Transparent" Offset="0.0"/>
+          <GradientStop Color="{DynamicResource MaterialDesignSilverGray}" Offset="1.0"/>
+        </LinearGradientBrush>
+      </DockPanel.Background>
     </DockPanel>
 
     <Grid Name="SendMessagePanel"
-               Grid.Column="1"
-               Grid.Row="2"
-               Background="White"
-          ColumnDefinitions="1*,0.05*">
-      <TextBox
-        
-        Height="25"
-        Name="MessageTextBox"
-        BorderBrush="Transparent"
-        BorderThickness="0"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        TextWrapping="Wrap"
-        Watermark="Write a message..."
-        Text="{Binding MessageText}"/>
-        
-      <Button
-        Command="{Binding SendMessageCommand}"
-        Grid.Column="1"
-        Background="Transparent"
-        HorizontalAlignment="Right">
-        <Image Height="25"
-                 Width="25"
-                 Source="{Binding Source={x:Static s:AssetManager.SendIcon}}"/>
-      </Button>
+          Grid.Column="1"
+          Grid.Row="2"
+          Height="80"
+          ColumnDefinitions="0.6*,0.09*">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" Name="MessageBoxGrid"  Grid.Column="0">
+          <TextBox AcceptsReturn="True"
+                   Width="{Binding ElementName=MessageBoxGrid, Path=Width}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Top"
+                 Name="MessageTextBox"
+                 Margin="0"
+                   Height="50"
+                 TextWrapping="Wrap"
+                 Text="{Binding MessageText}" />
+        </Grid>
+        <Grid Grid.Column="1" VerticalAlignment="Center">
+          <Button
+          
+          Command="{Binding SendMessageCommand}"
+          Grid.Column="1"
+          Background="Transparent"
+          Margin="5"
+          Height="45"
+          Width="45"
+          VerticalAlignment="Center"
+          HorizontalAlignment="Right">
+            <Image Height="25"
+                     Width="25"
+                     Source="{Binding Source={x:Static s:AssetManager.SendIcon}}"/>
+          </Button>
+        </Grid>
     </Grid>
     
   </Grid>

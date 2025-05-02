@@ -45,6 +45,7 @@
         </ListBox>
         <DockPanel>
           <Button
+            Height="45"
             Command="{Binding LeaveChatCommand}"
             Background="Transparent"
             Content="Leave"

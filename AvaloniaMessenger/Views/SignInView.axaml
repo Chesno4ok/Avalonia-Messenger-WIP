@@ -3,9 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+            
              x:Class="AvaloniaMessenger.Views.SignInView"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:DataType="vm:SignInViewModel">
   <UserControl.Styles>
     <Style Selector="TextBox">
@@ -28,15 +30,19 @@
       
       <TextBox 
         Watermark="Login" 
-        Width="150"
+        Width="200"
         Text="{Binding Login}">
         <TextBox.InnerLeftContent>
-          <Image Height="25" 
-                 Width="25"  
-                 Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>
+          <icons:MaterialIcon 
+            Kind="Login"
+            Height="25"
+            Width="25"/>
+          <!--<Image Height="25"
+                 Width="25"
+                 Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>-->
         </TextBox.InnerLeftContent> </TextBox>
 
-      <UserControl Margin="40,0,0,0" 
+      <UserControl Margin="35,0,0,0" 
                    Content="{Binding PasswordInput}"></UserControl>
 
       <CheckBox VerticalAlignment="Top"
@@ -49,10 +55,10 @@
       
       
       <Button 
-        Command="{Binding SignInCommand}">Sign In</Button>
+        Command="{Binding SignInCommand}" Height="45">Sign In</Button>
       
       <Button
-        Command="{Binding SignUpCommand}">Sign Up</Button>
+        Command="{Binding SignUpCommand}" Height="45">Sign Up</Button>
     </StackPanel>
   </DockPanel>
 </UserControl>

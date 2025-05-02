@@ -12,7 +12,6 @@
       <ControlTemplate>
         
         <Grid 
-          Background="WhiteSmoke"
           VerticalAlignment="Stretch">
           <Border
             IsVisible="{Binding IsVisible, RelativeSource={RelativeSource TemplatedParent}}" Background="White"

@@ -76,6 +76,9 @@ class MainViewModel : ViewModelBase
 
         viewModel.SetMessengerCommand = ReactiveCommand.Create<User>(user => SetMessenger(user));
         viewModel.SignUpCommand = ReactiveCommand.Create(() => { SetSignUp(); });
+        Settings.GetInstance().ApiKey = "";
+        Settings.GetInstance().SaveSettings();
+
 
         MainView = new SignInView { DataContext = viewModel };
     }   

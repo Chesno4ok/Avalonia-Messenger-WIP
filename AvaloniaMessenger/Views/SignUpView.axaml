@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaMessenger.Views.SignUpView"
+              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
              x:DataType="vm:SignUpViewModel">
@@ -29,21 +30,25 @@
       <TextBox
         
         Watermark="Username"
+        Width="200"
         Text="{Binding Username}">
         <TextBox.InnerLeftContent>
-          <Image Height="25"
+          <icons:MaterialIcon Kind="Account" Height="25" Width="25"/>
+          <!--<Image Height="25"
                  Width="35"
-                 Source="{Binding Source={x:Static s:AssetManager.UsernameIcon}}"/>
+                 Source="{Binding Source={x:Static s:AssetManager.UsernameIcon}}"/>-->
         </TextBox.InnerLeftContent>
       </TextBox>
       
       <TextBox
         Watermark="Login"
+        Width="200"
         Text="{Binding Login}">
         <TextBox.InnerLeftContent>
-          <Image Height="25"
+          <icons:MaterialIcon Kind="Login" Height="25" Width="25"/>
+          <!--<Image Height="25"
                  Width="35"
-                 Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>
+                 Source="{Binding Source={x:Static s:AssetManager.LoginIcon}}"/>-->
         </TextBox.InnerLeftContent>
       </TextBox>
 
@@ -59,12 +64,14 @@
       
     
       <Button
+        Height="45"
         ToolTip.Tip="Enter"
         Command="{Binding SignUpCommand}">Sign up</Button>
 
       <UserControl Margin="48,0,0,0"  Content="{Binding SignInErrors}" />
-      
+
       <Button
+        Height="45"
         Command="{Binding ReturnCommand}">Return</Button>
     </StackPanel>
   </DockPanel>

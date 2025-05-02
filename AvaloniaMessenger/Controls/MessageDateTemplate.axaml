@@ -12,7 +12,7 @@
   
   <Design.PreviewWith>
     <StackPanel Width="400" Spacing="10">      
-        <StackPanel Background="{DynamicResource SystemRegionBrush}">
+        <StackPanel >
           <controls:MessageDateTemplate />
         </StackPanel>
     </StackPanel>

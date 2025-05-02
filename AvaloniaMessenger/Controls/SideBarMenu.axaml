@@ -89,6 +89,7 @@
                       Command="{Binding ReactiveCommand}"
                       Background="Transparent"
                       HorizontalAlignment="Stretch"
+                      Width="200"
                       Height="30"/>
                 </DataTemplate>
               </ListBox.ItemTemplate>

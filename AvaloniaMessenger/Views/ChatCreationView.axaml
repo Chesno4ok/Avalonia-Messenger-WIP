@@ -73,9 +73,11 @@
           </ListBox>
           <DockPanel>
             <Button Content="Create"
+                    Height="45"
                     Command="{Binding CreateNewChatCommand}"/>
 
             <Button
+                    Height="45"
                     Content="Cancel"
                     Command="{Binding CloseViewCommand}"/>
           </DockPanel>

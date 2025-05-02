@@ -45,6 +45,7 @@
     Margin="0" Height="20">
     <TextBlock
         Name="ErrorPopup"
+        FontWeight="Bold"
         HorizontalAlignment="Left"
         Height="25"
         FontSize="13"

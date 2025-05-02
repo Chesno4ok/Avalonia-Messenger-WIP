@@ -13,8 +13,8 @@ namespace AvaloniaMessenger.Models
     {
         private static Settings _instance { get; set; }
 
-        public string ConnectionString { get; set; } = null!;
-        public string ApiKey { get; set; } = null!;
+        public string ConnectionString { get; set; } = "";
+        public string ApiKey { get; set; } = "";
 
         private Settings()
         {
