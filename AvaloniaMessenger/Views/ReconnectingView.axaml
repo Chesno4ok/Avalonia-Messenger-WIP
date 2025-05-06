@@ -10,23 +10,17 @@
     VerticalAlignment="Center"
     HorizontalAlignment="Center"
     >
-    <TextBlock Text="Failed to connect to the server.
-               Trying to reconnect. &#10;Please Wait. &#10;And look at the dinosaur"
+    <TextBlock Text="Failed to connect to the server.Trying to reconnect. &#10;Please Wait. &#10;And look at the dinosaur"
                TextWrapping="Wrap" 
                TextAlignment="Center"
                FontSize="15"/>
-    <TextBlock Text="              
-      __&#10;
-                  /  _)&#10;
-     _.----._/  /&#10;
-     /            /&#10;
- __/  (  |   (  |&#10;
-/__.-'|_|--|_|&#10;
-"
-               TextAlignment="Left"
-               TextWrapping="NoWrap"
-               FontSize="15"
-               />
+    <ProgressBar 
+      Classes="Dark" 
+      Width="260" 
+      IsIndeterminate="True" 
+      Margin="20"
+      HorizontalAlignment="Center"
+      ToolTip.Tip="Please wait" />
     
   </StackPanel>
 </UserControl>
