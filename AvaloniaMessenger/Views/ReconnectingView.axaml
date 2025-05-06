@@ -10,7 +10,7 @@
     VerticalAlignment="Center"
     HorizontalAlignment="Center"
     >
-    <TextBlock Text="Failed to connect to the server.Trying to reconnect. &#10;Please Wait. &#10;And look at the dinosaur"
+    <TextBlock Text="Connection failed&#10;Please Wait."
                TextWrapping="Wrap" 
                TextAlignment="Center"
                FontSize="15"/>

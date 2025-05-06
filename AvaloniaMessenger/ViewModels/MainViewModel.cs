@@ -34,11 +34,12 @@ class MainViewModel : ViewModelBase
     // 
     public MainViewModel()
     {
+
         var settings = Settings.GetInstance();
 
         Messenger = new MessengerController(new Uri(Settings.GetInstance().ConnectionString));
 
-        if(settings.ApiKey == null)
+        if (settings.ApiKey == null)
         {
             SetSignIn();
             return;
@@ -46,7 +47,17 @@ class MainViewModel : ViewModelBase
 
         User? user = new User();
         Messenger.apiCaller.Token = "Bearer " + settings.ApiKey;
-        user = Messenger.GetMe();
+
+        try
+        {
+            user = Messenger.GetMe();
+        }
+        catch
+        {
+            SetSignIn();
+            return;
+        }
+
 
         if (user is null)
         {
@@ -57,8 +68,9 @@ class MainViewModel : ViewModelBase
         user.Token = settings.ApiKey;
         SetMessenger(user);
 
-        
-    }   
+
+
+    }
     public void SetMessenger(User user)
     {
         Messenger.apiCaller.Token = "Bearer " + user.Token;
