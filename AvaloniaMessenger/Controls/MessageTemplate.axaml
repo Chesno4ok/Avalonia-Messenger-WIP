@@ -14,7 +14,8 @@
         <Grid 
           VerticalAlignment="Stretch">
           <Border
-            IsVisible="{Binding IsVisible, RelativeSource={RelativeSource TemplatedParent}}" Background="White"
+            IsVisible="{Binding IsVisible, RelativeSource={RelativeSource TemplatedParent}}"
+            Background="{DynamicResource MaterialDesignSilverGray}"
             CornerRadius="20"
             Padding="5">
             <StackPanel>

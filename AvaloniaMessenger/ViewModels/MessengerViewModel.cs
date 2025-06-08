@@ -1,9 +1,14 @@
-﻿using Avalonia.Collections;
+﻿using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Styling;
+using Avalonia.Themes.Neumorphism;
+using Avalonia.Themes.Neumorphism.Enums;
 using Avalonia.Threading;
 using AvaloniaMessenger.Controllers;
 using AvaloniaMessenger.Controls;
 using AvaloniaMessenger.Models;
+using AvaloniaMessenger.Services;
 using AvaloniaMessenger.Views;
 using Newtonsoft.Json;
 using ReactiveUI;
@@ -25,12 +30,23 @@ namespace AvaloniaMessenger.ViewModels
         private User user { get; set; }
         private MessengerController messenger { get; set; }
 
+        private bool _isChatSelected = false;
+        public bool IsChatSelected
+        {
+            get => _isChatSelected;
+            set => this.RaiseAndSetIfChanged(ref _isChatSelected, value);
+        }
+
         // Binding Properties
         private Chat? _selectedChat;
         public Chat? SelectedChat
         {
             get => _selectedChat;
-            set => this.RaiseAndSetIfChanged(ref _selectedChat, value);
+            set
+            {
+                IsChatSelected = value is not null;
+                this.RaiseAndSetIfChanged(ref _selectedChat, value);
+            }
         }
         private string? _messageText;
         public string? MessageText
@@ -108,7 +124,7 @@ namespace AvaloniaMessenger.ViewModels
             this.user = user;
             this.messenger = messenger;
             SelectedChat = null;
-
+            
             // SignalR
             SignalRController = new(Settings.GetInstance().ConnectionString, user.Token, user);
             SignalRController.LoadNewMessagesCommand = ReactiveCommand.Create<Message>(m => OnNewMessage(m));
@@ -227,21 +243,21 @@ namespace AvaloniaMessenger.ViewModels
         {
             int firstId = Messages.FirstOrDefault(i => i.Id != 0).Id;
 
-            var newMessages = messenger.GetPreviousMessages(user.Id, SelectedChat.Id, firstId, 10);
+            var newMessages = messenger.GetPreviousMessages(user.Id, SelectedChat.Id, firstId, 20);
 
             if(newMessages.Length == 0)
             {
                 EndOfChat = true;
             }
 
-            //newMessages = MarkSenders(newMessages);
+
 
             if (newMessages != null)
             {
                 Messages.InsertRange(0, newMessages.Reverse());
                 SetDates();
             }
-            
+
             await Task.CompletedTask;
         }
 
@@ -334,10 +350,14 @@ namespace AvaloniaMessenger.ViewModels
 
             //messages = MarkSenders(messages);
 
+            if (messages is null)
+                return;
+
             Messages.AddRange(messages.Reverse());
 
             SetDates();
         }
+        
         public void SetDates()
         {
             Message? prev = null;
@@ -346,6 +366,9 @@ namespace AvaloniaMessenger.ViewModels
             
             if(dates.Count() > 0)
                 Messages.RemoveAll(dates);
+
+            if(Messages.Count > 1)
+                Dispatcher.UIThread.Post(() => Messages.Insert(0, new Message { Date = Messages[0].Date, User = null }));
 
             foreach (var i in Messages)
             {
@@ -385,6 +408,18 @@ namespace AvaloniaMessenger.ViewModels
         private void SetChats()
         {
             ChatList.AddRange(messenger.GetChats(user.Id.ToString()));
+        }
+        public void ChangeTheme()
+        {
+            var neumorphismTheme = Application.Current.LocateMaterialTheme<NeumorphismTheme>();
+
+            if (neumorphismTheme.BaseTheme == ApplicationTheme.Dark)
+                neumorphismTheme.BaseTheme = ApplicationTheme.Light;
+            else
+                neumorphismTheme.BaseTheme = ApplicationTheme.Dark;
+
+
+
         }
     }
 }

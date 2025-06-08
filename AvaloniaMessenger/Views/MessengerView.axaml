@@ -6,6 +6,7 @@
              x:Class="AvaloniaMessenger.Views.MessengerView"
              xmlns:vm="clr-namespace:AvaloniaMessenger.ViewModels"
              xmlns:s="clr-namespace:AvaloniaMessenger.Assets"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:AvaloniaMessenger.Controls"
              
              x:DataType="vm:MessengerViewModel">
@@ -86,12 +87,21 @@
           <GradientStop Color="{DynamicResource MaterialDesignSilverGray}" Offset="1.0"/>
         </LinearGradientBrush>
       </DockPanel.Background>
+      <Button Width="30" 
+              Height="30" 
+              HorizontalAlignment="Left" 
+              Margin="15,0,0,0"
+              Command="{Binding ChangeTheme}">
+        <icons:MaterialIcon Kind="ThemeLightDark" />
+      </Button>
     </DockPanel>
     
     <DockPanel Name="ChatHeaderPanel" 
                Grid.Column="1" 
                HorizontalAlignment="Stretch" Height="60">
-    <Button Content="{Binding SelectedChat.ChatName}" 
+    <Button Content="{Binding SelectedChat.ChatName}"
+            IsVisible="{Binding IsChatSelected}"
+            IsEnabled="{Binding IsChatSelected}"
             Height="45"
             Width="{Binding ElementName=ChatHeaderPanel, Path=Width}"
             Command="{Binding OpenChatSettingsCommand}" 
@@ -110,7 +120,8 @@
           Height="80"
           ColumnDefinitions="0.6*,0.09*">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0" Name="MessageBoxGrid"  Grid.Column="0">
-          <TextBox AcceptsReturn="True"
+          <TextBox 
+            IsEnabled="{Binding IsChatSelected}"
                    Width="{Binding ElementName=MessageBoxGrid, Path=Width}"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Top"
@@ -122,7 +133,7 @@
         </Grid>
         <Grid Grid.Column="1" VerticalAlignment="Center">
           <Button
-          
+            IsEnabled="{Binding IsChatSelected}"
           Command="{Binding SendMessageCommand}"
           Grid.Column="1"
           Background="Transparent"

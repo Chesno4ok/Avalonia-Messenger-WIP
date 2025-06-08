@@ -36,7 +36,13 @@ namespace AvaloniaMessenger.Controls
         public string Date
         {
             get => GetValue(DateProperty);
-            set => SetValue(DateProperty, value);
+            set
+            {
+                if (Message.User != null)
+                    return;
+
+                SetValue(DateProperty, value);
+            }
         }
 
         public override void BeginInit()

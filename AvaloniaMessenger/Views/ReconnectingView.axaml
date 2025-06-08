@@ -6,9 +6,9 @@
              Background="rgba(0, 0, 0, 0.47)"
              x:Class="AvaloniaMessenger.Views.ReconnectingView">
   <StackPanel
-    Background="White"
+    
     VerticalAlignment="Center"
-    HorizontalAlignment="Center"
+    HorizontalAlignment="Center" 
     >
     <TextBlock Text="Connection failed&#10;Please Wait."
                TextWrapping="Wrap" 

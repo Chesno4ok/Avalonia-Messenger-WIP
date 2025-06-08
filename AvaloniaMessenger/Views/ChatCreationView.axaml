@@ -23,7 +23,7 @@
         BorderThickness="2"
         VerticalAlignment="Center"
         HorizontalAlignment="Center"
-        Background="White"
+        Background="{DynamicResource MaterialDesignLightGray}"
         CornerRadius="20"
         Padding="10">
         <StackPanel

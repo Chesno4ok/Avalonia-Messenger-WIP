@@ -19,14 +19,14 @@
     <Border
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        Background="White"
+        Background="{DynamicResource MaterialDesignLightGray}"
         CornerRadius="20"
         Padding="10"
       >
       <StackPanel
         Spacing="10"
       Width="400"
-      Background="White"
+      Background="{DynamicResource MaterialDesignLightGray}"
       VerticalAlignment="Center"
       HorizontalAlignment="Center">
         <TextBlock

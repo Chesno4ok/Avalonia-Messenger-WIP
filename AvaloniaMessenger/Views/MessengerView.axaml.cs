@@ -112,10 +112,10 @@ namespace AvaloniaMessenger.Views
         }
         private void MessageTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter)
-                return;
+            if (e.Key == Key.Enter)
+                (DataContext as MessengerViewModel).SendMessage();
 
-            (DataContext as MessengerViewModel).SendMessage();
+
         }
         public void SetDates()
         {
@@ -125,8 +125,6 @@ namespace AvaloniaMessenger.Views
 
             foreach(var msg in MessagePanel.Items)
             {
-                
-
                 if(msg is MessageDateTemplate)
                     continue;
             }

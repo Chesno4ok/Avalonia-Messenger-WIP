@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:AvaloniaMessenger.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        MinWidth="300"
+        MinWidth="400"
         x:Class="AvaloniaMessenger.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Content="{Binding MainView}"
-        Title="AvaloniaMessenger">
+        Title="Messenger">
         <views:MainView />
 </Window>

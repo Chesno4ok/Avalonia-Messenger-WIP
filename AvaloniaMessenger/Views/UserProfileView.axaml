@@ -13,23 +13,23 @@
       
     </Grid>
     <Border BorderThickness="2"
-            Background="White"
-            Width="400" Height="200"
+            Background="{DynamicResource MaterialDesignLightGray}"
+            Width="350" Height="200"
             CornerRadius="20"
-            Padding="10">
-      <Grid ZIndex="1"
-            Background="White">
+            Padding="9">
+      <Grid ZIndex="1">
 
-        <StackPanel>
+        <StackPanel HorizontalAlignment="Center">
           <TextBlock Text="Profile" FontSize="20"/>
           <TextBox Watermark="Username"
                  Text="{Binding UserName}"
                  MinHeight="35"
+                   HorizontalAlignment="Stretch"
                  VerticalAlignment="Top"/>
           <TextBlock Name="ErrorText" Foreground="Red"/>
         </StackPanel>
         
-        <DockPanel VerticalAlignment="Bottom">
+        <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
           <Button Content="Save" Height="45" Command="{Binding SaveUser}"/>
           <Button Content="Exit" Height="45" Command="{Binding ExitUserProfile}"/>
         </DockPanel>

@@ -108,6 +108,7 @@ namespace AvaloniaMessenger.ViewModels
             if (RememberPassword)
             {
                 var settings = Settings.GetInstance();
+
                 settings.ApiKey = userToken.Token;
                 settings.SaveSettings();
             }

@@ -73,10 +73,17 @@
               Width="200"
               Grid.Column="0"
               VerticalAlignment="Stretch"
-              Background="White"
+              
               HorizontalAlignment="Left"
               Focusable="False"
               ItemsSource="{TemplateBinding CommandList}">
+              <ListBox.Background>
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                  <GradientStop Color="{DynamicResource MaterialDesignLightGray}" Offset="1.0"/>
+                  <GradientStop Color="{DynamicResource MaterialDesignTransparent}" Offset="0.0"/>
+                  
+                </LinearGradientBrush>
+              </ListBox.Background>
               <ListBox.Styles>
                 <Style Selector="ListBoxItem">
                   <Setter Property="Padding" Value="0"/>
