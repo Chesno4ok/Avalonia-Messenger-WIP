@@ -110,6 +110,8 @@ namespace AvaloniaMessenger.ViewModels
                 var settings = Settings.GetInstance();
 
                 settings.ApiKey = userToken.Token;
+
+
                 settings.SaveSettings();
             }
 

@@ -21,7 +21,7 @@ namespace AvaloniaMessenger.Models
         }
         public static Settings GetInstance()
         {
-            if(_instance == null)
+            if (_instance == null)
             {
                 _instance = new Settings();
 
@@ -35,7 +35,7 @@ namespace AvaloniaMessenger.Models
                     File.WriteAllText("settings.json", JsonConvert.SerializeObject(_instance));
                     throw new Exception("Please fill settings.json");
                 }
-                
+
 
                 var settings = JsonConvert.DeserializeObject<Settings>(json);
 
